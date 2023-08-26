@@ -1,12 +1,128 @@
-﻿<Window x:Class="ColorMixer.Application.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ColorMixer.Application"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+﻿<mah:MetroWindow 
+    x:Class="ColorMixer.Application.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:view="clr-namespace:ColorMixer.Application.Views" 
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d"
+    Title="MainWindow" Height="450" Width="800">
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
 
-    </Grid>
-</Window>
+            <DataTemplate x:Key="HamburgerMenuItem" DataType="{x:Type mah:HamburgerMenuIconItem}">
+                <DockPanel Height="48" LastChildFill="True">
+                    <ContentControl 
+                        x:Name="IconPart"
+                        Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}"
+                        Content="{Binding Icon}"
+                        DockPanel.Dock="Left"
+                        Focusable="False"
+                        IsTabStop="False" />
+                    <!--<ContentControl 
+                       x:Name="ContentPart"
+                       VerticalAlignment="Center"
+                       Content="{Binding Tag, Mode=OneTime}" />-->
+                </DockPanel>
+                <DataTemplate.Triggers>
+                    <DataTrigger 
+                        Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=PanePlacement}" 
+                        Value="Right">
+                        <Setter TargetName="IconPart" Property="DockPanel.Dock" Value="Right" />
+                        <!--<Setter TargetName="ContentPart" Property="Margin" Value="8 0 0 0" />-->
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <mah:HamburgerMenu 
+        x:Name="HamburgerMenuControl"
+        DisplayMode="CompactOverlay"
+        HamburgerWidth="48"
+        ItemTemplate="{StaticResource HamburgerMenuItem}"
+        OptionsItemTemplate="{StaticResource HamburgerMenuItem}"
+        ItemInvoked="HamburgerMenu_OnItemInvoked"
+        FontSize="16">
+
+        <mah:HamburgerMenu.HamburgerMenuHeaderTemplate>
+            <DataTemplate>
+                <TextBlock 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Foreground="White"
+                    Text="Menu" />
+            </DataTemplate>
+        </mah:HamburgerMenu.HamburgerMenuHeaderTemplate>
+
+        <mah:HamburgerMenu.ContentTemplate>
+            <DataTemplate>
+                <Grid x:Name="ContentGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border 
+                        Grid.Row="0"
+                        Margin="-1 0 -1 0"
+                        Background="#7A7A7A">
+                        <TextBlock 
+                            x:Name="Header"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="24"
+                            Foreground="White"
+                            Text="{Binding Label}" />
+                    </Border>
+                    <mah:TransitioningContentControl 
+                        Grid.Row="1"
+                        Content="{Binding}"
+                        RestartTransitionOnContentChange="True"
+                        Transition="Default">
+
+                        <mah:TransitioningContentControl.Resources>
+                            <DataTemplate DataType="{x:Type mah:HamburgerMenuIconItem}">
+                                <ContentControl 
+                                    Content="{Binding Tag, Mode=OneWay}"
+                                    Focusable="True"
+                                    IsTabStop="False" />
+                            </DataTemplate>
+                        </mah:TransitioningContentControl.Resources>
+
+                    </mah:TransitioningContentControl>
+                </Grid>
+            </DataTemplate>
+        </mah:HamburgerMenu.ContentTemplate>
+
+        <mah:HamburgerMenu.ItemsSource>
+            <mah:HamburgerMenuItemCollection>
+
+                <mah:HamburgerMenuIconItem
+                    Label="Color Mixer">
+
+                    <mah:HamburgerMenuIconItem.Icon>
+                        
+                        <iconPacks:PackIconMaterial 
+                            Width="22"
+                            Height="22"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Kind="ColorHelper" />
+                    </mah:HamburgerMenuIconItem.Icon>
+
+                    <mah:HamburgerMenuIconItem.Tag>
+                        <view:ColorMixerView></view:ColorMixerView>
+                    </mah:HamburgerMenuIconItem.Tag>
+
+                </mah:HamburgerMenuIconItem>
+                
+            </mah:HamburgerMenuItemCollection>
+        </mah:HamburgerMenu.ItemsSource>
+
+    </mah:HamburgerMenu>
+
+</mah:MetroWindow>
