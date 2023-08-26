@@ -193,3 +193,6 @@ obj
 
 # Ignore Visual Studio caches
 /.vs
+
+# Ignore Jet Brains IDE caches
+/.idea
