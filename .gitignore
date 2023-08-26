@@ -196,3 +196,6 @@ obj
 
 # Ignore Jet Brains IDE caches
 /.idea
+
+# Ignore MacOs X service files
+/.DS_STORE 
