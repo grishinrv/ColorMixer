@@ -46,7 +46,7 @@ namespace ColorMixer.Storage.DependencyInjection
         }
 
         /// <summary>
-        /// On first application launch - move storage gile to <see cref="_appDataColorMixerStorageFile"/>
+        /// On first application launch - move storage file to <see cref="_appDataColorMixerStorageFile"/>
         /// </summary>
         private void CopyInitialDbFileToAppData()
         {
