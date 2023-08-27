@@ -7,12 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Storage.db" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="EficazFramework.Data.SqlLite" Version="6.1.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ColorMixer.Contracts\ColorMixer.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Storage.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>
