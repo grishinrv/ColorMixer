@@ -1,18 +1,14 @@
 ﻿using ColorMixer.Contracts.Helpers;
 using ColorMixer.Contracts.Services;
 using ControlzEx.Theming;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ColorMixer.Application.Services
 {
-    public sealed class SettingsManager
+    public sealed class ThemeSettingsManager
     {
         private readonly ISettingsRepository _settingsRepository;
-        public SettingsManager(ISettingsRepository settingsRepository)
+        public ThemeSettingsManager(ISettingsRepository settingsRepository)
         {
             _settingsRepository = settingsRepository;
         }
