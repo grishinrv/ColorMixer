@@ -20,7 +20,9 @@ namespace ColorMixer.Storage.DependencyInjection
 #pragma warning restore CS8618 
         {
             InsureStorageFileExists();
+#if RELEASE
             CopyInitialDbFileToAppData();
+#endif
         }
 
         public void ConfigureServices(IServiceCollection services)
