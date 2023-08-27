@@ -27,7 +27,7 @@ namespace ColorMixer.Application.Services
                 string themeName = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_THEME);
                 bool isDarkMode = await _settingsRepository.GetSetting<bool>(SettingsHelper.DARK_MODE);
                 bool isHighContrast = await _settingsRepository.GetSetting<bool>(SettingsHelper.HIGHT_CONTRAST);
-                themeName = isDarkMode ? $"{themeName}.Dark" : $"{themeName}.Light";
+                themeName = isDarkMode ? $"Dark.{themeName}" : $"Light.{themeName}";
                 ThemeManager.Current.ChangeTheme(App.Current, themeName, isHighContrast);
             }
 
