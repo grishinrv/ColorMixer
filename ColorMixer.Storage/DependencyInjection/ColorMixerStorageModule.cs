@@ -52,7 +52,10 @@ namespace ColorMixer.Storage.DependencyInjection
         {
             string defaultStorageFile = Path.Combine(AppContext.BaseDirectory, STORAGE_FILE_NAME);
             if (File.Exists(defaultStorageFile))
+            {
+                File.Delete(_appDataColorMixerStorageFile);
                 File.Move(defaultStorageFile, _appDataColorMixerStorageFile);
+            }
         }
     }
 }

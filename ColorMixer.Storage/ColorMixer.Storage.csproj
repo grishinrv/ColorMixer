@@ -1,14 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
-
-    <ItemGroup>
-      <None Remove="Storage.db" />
-    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="EficazFramework.Data.SqlLite" Version="6.1.5" />
@@ -24,9 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Resource Include="Storage.db">
+      <None Update="Storage.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Resource>
+      </None>
     </ItemGroup>
 
 </Project>
