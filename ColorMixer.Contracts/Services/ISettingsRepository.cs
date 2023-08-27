@@ -27,7 +27,7 @@ namespace ColorMixer.Contracts.Services
         /// <param name="value">Value</param>
         /// <throws><see cref="SettingDoesNotExistException"/> in case setting with specified key doesn't exist in the storage.</throws>
         /// <throws><see cref="ArgumentException"/>Setting ket is null or unsupported type T.</throws>
-        /// <returns>Actual setting value.</returns>
-        public Task<T> SaveSettingIfChanged<T>(string settingKey, T value);
+        /// <returns>If settings is updated.</returns>
+        public Task<bool> SaveSettingIfChanged<T>(string settingKey, T value);
     }
 }
