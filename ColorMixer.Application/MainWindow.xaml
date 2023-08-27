@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:view="clr-namespace:ColorMixer.Application.Views" 
+    xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     Title="MainWindow" Height="450" Width="800">
@@ -13,7 +14,7 @@
         <ResourceDictionary>
 
             <DataTemplate x:Key="HamburgerMenuItem" DataType="{x:Type mah:HamburgerMenuIconItem}">
-                <DockPanel Height="48" LastChildFill="True">
+                <StackPanel Height="48" Orientation="Horizontal">
                     <ContentControl 
                         x:Name="IconPart"
                         Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}"
@@ -21,17 +22,17 @@
                         DockPanel.Dock="Left"
                         Focusable="False"
                         IsTabStop="False" />
-                    <!--<ContentControl 
+                    <Label 
                        x:Name="ContentPart"
                        VerticalAlignment="Center"
-                       Content="{Binding Tag, Mode=OneTime}" />-->
-                </DockPanel>
+                       Content="{Binding Tag.Title, Mode=OneWay}" />
+                </StackPanel>
                 <DataTemplate.Triggers>
                     <DataTrigger 
                         Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=PanePlacement}" 
                         Value="Right">
                         <Setter TargetName="IconPart" Property="DockPanel.Dock" Value="Right" />
-                        <!--<Setter TargetName="ContentPart" Property="Margin" Value="8 0 0 0" />-->
+                        <Setter TargetName="ContentPart" Property="Margin" Value="8 0 0 0" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -107,7 +108,7 @@
                     <mah:HamburgerMenuIconItem.Icon>
                         
                         <iconPacks:PackIconMaterial 
-                            Width="22"
+                            Width="32"
                             Height="22"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -122,6 +123,31 @@
                 
             </mah:HamburgerMenuItemCollection>
         </mah:HamburgerMenu.ItemsSource>
+
+        <mah:HamburgerMenu.OptionsItemsSource>
+            <mah:HamburgerMenuItemCollection>
+
+                <mah:HamburgerMenuIconItem
+                    Label="Settings">
+
+                    <mah:HamburgerMenuIconItem.Icon>
+
+                        <iconPacks:PackIconMaterial 
+                            Width="32"
+                            Height="32"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Kind="RobotConfused" />
+                    </mah:HamburgerMenuIconItem.Icon>
+
+                    <mah:HamburgerMenuIconItem.Tag>
+                        <view:SettingsView></view:SettingsView>
+                    </mah:HamburgerMenuIconItem.Tag>
+
+                </mah:HamburgerMenuIconItem>
+
+            </mah:HamburgerMenuItemCollection>
+        </mah:HamburgerMenu.OptionsItemsSource>
 
     </mah:HamburgerMenu>
 
