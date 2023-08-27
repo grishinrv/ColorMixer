@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\ColorMixer.Contracts\ColorMixer.Contracts.csproj" />
     </ItemGroup>
 
 </Project>
