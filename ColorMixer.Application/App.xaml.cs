@@ -19,7 +19,7 @@ namespace ColorMixer.Application
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<MainWindow>();
-            services.AddSingleton<SettingsManager>();
+            services.AddSingleton<ThemeSettingsManager>();
 
             new ColorMixerStorageModule().ConfigureServices(services);
         }
@@ -27,9 +27,8 @@ namespace ColorMixer.Application
         private async void OnStartup(object sender, StartupEventArgs e)
         {
             MainWindow mainWindow = _provider.GetService<MainWindow>()!;
-            SettingsManager settingsManager = _provider.GetRequiredService<SettingsManager>();
+            ThemeSettingsManager settingsManager = _provider.GetRequiredService<ThemeSettingsManager>();
             await settingsManager.ApplyCurrentThemeSettings();
-     
 
             mainWindow.Show();
         }
