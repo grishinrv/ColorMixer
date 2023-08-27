@@ -15,13 +15,6 @@ namespace ColorMixer.Application
         private void HamburgerMenu_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
             HamburgerMenuControl.Content = e.InvokedItem;
-
-            if (!e.IsItemOptions && HamburgerMenuControl.IsPaneOpen)
-            {
-                // You can close the menu if an item was selected
-                // this.HamburgerMenuControl.SetCurrentValue(HamburgerMenuControl.IsPaneOpenProperty, false);
-            }
         }
-
     }
 }
