@@ -32,7 +32,7 @@ namespace ColorMixer.Storage.Services
             }
         }
 
-        public async Task<T> SaveSetting<T>(string settingKey, T value)
+        public async Task<T> SaveSettingIfChanged<T>(string settingKey, T value)
         {
             ValidateType<T>();
             ArgumentNullException.ThrowIfNull(settingKey, nameof(settingKey));
@@ -41,8 +41,11 @@ namespace ColorMixer.Storage.Services
             try
             {
                 SettingsModel setting = await context.Settings.FirstAsync(x => x.Key == settingKey);
-                setting.Value = value?.ToString();
-                context.SaveChanges();
+                if (!string.Equals(setting.Value, value?.ToString()))
+                {
+                    setting.Value = value?.ToString();
+                    context.SaveChanges();
+                }
                 return (T)Convert.ChangeType(setting.Value, typeof(T))!;
             }
             catch (NullReferenceException)
