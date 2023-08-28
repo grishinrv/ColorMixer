@@ -57,3 +57,6 @@ dotnet build
 * Unit tests
 * Interactive in-build app demo
 * Installer / uninstaller
+* Allow user to create his own custom theme
+* Allow copying of color parameters
+* Suuport setting of initial window size
