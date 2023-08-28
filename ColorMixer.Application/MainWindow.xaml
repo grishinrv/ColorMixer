@@ -128,7 +128,7 @@
             <mah:HamburgerMenuItemCollection>
 
                 <mah:HamburgerMenuIconItem
-                    Label="Settings">
+                    Label="{helpers:Translate settings}">
 
                     <mah:HamburgerMenuIconItem.Icon>
 
