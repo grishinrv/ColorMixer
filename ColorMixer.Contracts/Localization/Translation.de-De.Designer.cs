@@ -14,21 +14,21 @@ namespace ColorMixer.Contracts.Localization {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Translation_de {
+    internal class Translation_de_De {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Translation_de() {
+        internal Translation_de_De() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("ColorMixer.Contracts.Localization.Translation_de-De", typeof(Translation_de).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("ColorMixer.Contracts.Localization.Translation_de_De", typeof(Translation_de_De).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -108,6 +108,42 @@ namespace ColorMixer.Contracts.Localization {
         internal static string rgb_blue {
             get {
                 return ResourceManager.GetString("rgb_blue", resourceCulture);
+            }
+        }
+        
+        internal static string rgb_green {
+            get {
+                return ResourceManager.GetString("rgb_green", resourceCulture);
+            }
+        }
+        
+        internal static string setting_sync_os {
+            get {
+                return ResourceManager.GetString("setting_sync_os", resourceCulture);
+            }
+        }
+        
+        internal static string setting_selected_theme {
+            get {
+                return ResourceManager.GetString("setting_selected_theme", resourceCulture);
+            }
+        }
+        
+        internal static string setting_dark_mode {
+            get {
+                return ResourceManager.GetString("setting_dark_mode", resourceCulture);
+            }
+        }
+        
+        internal static string setting_high_contrast {
+            get {
+                return ResourceManager.GetString("setting_high_contrast", resourceCulture);
+            }
+        }
+        
+        internal static string setting_selected_ui_culture {
+            get {
+                return ResourceManager.GetString("setting_selected_ui_culture", resourceCulture);
             }
         }
     }

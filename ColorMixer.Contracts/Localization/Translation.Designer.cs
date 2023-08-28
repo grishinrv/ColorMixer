@@ -116,5 +116,35 @@ namespace ColorMixer.Contracts.Localization {
                 return ResourceManager.GetString("rgb_green", resourceCulture);
             }
         }
+        
+        internal static string setting_sync_os {
+            get {
+                return ResourceManager.GetString("setting_sync_os", resourceCulture);
+            }
+        }
+        
+        internal static string setting_selected_theme {
+            get {
+                return ResourceManager.GetString("setting_selected_theme", resourceCulture);
+            }
+        }
+        
+        internal static string setting_dark_mode {
+            get {
+                return ResourceManager.GetString("setting_dark_mode", resourceCulture);
+            }
+        }
+        
+        internal static string setting_high_contrast {
+            get {
+                return ResourceManager.GetString("setting_high_contrast", resourceCulture);
+            }
+        }
+        
+        internal static string setting_selected_ui_culture {
+            get {
+                return ResourceManager.GetString("setting_selected_ui_culture", resourceCulture);
+            }
+        }
     }
 }

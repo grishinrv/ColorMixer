@@ -54,4 +54,19 @@
     <data name="rgb_green" xml:space="preserve">
         <value>Grün</value>
     </data>
+    <data name="setting_sync_os" xml:space="preserve">
+        <value>Thema mit Betriebssystem synchronisieren:</value>
+    </data>
+    <data name="setting_selected_theme" xml:space="preserve">
+        <value>Ausgewähltes Thema:</value>
+    </data>
+    <data name="setting_dark_mode" xml:space="preserve">
+        <value>Dunkler Modus:</value>
+    </data>
+    <data name="setting_high_contrast" xml:space="preserve">
+        <value>Hoher Kontrast:</value>
+    </data>
+    <data name="setting_selected_ui_culture" xml:space="preserve">
+        <value>Ausgewählte UI-Kultur:</value>
+    </data>
 </root>

@@ -54,4 +54,19 @@
     <data name="rgb_green" xml:space="preserve">
         <value>Зеленый</value>
     </data>
+    <data name="setting_sync_os" xml:space="preserve">
+        <value>Синхронизировать тему с ОС:</value>
+    </data>
+    <data name="setting_selected_theme" xml:space="preserve">
+        <value>Выбранная тема:</value>
+    </data>
+    <data name="setting_dark_mode" xml:space="preserve">
+        <value>Темный режим:</value>
+    </data>
+    <data name="setting_high_contrast" xml:space="preserve">
+        <value>Высокий контраст:</value>
+    </data>
+    <data name="setting_selected_ui_culture" xml:space="preserve">
+        <value>Язык интерфейса:</value>
+    </data>
 </root>
