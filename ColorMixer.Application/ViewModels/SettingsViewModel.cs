@@ -7,10 +7,12 @@ using System.Globalization;
 using System.Threading.Tasks;
 using ColorMixer.Contracts.Localization;
 using ColorMixer.Application.Services;
+using System.Linq;
+using System;
 
 namespace ColorMixer.Application.ViewModels
 {
-    public sealed partial class SettingsViewModel : ObservableObject
+    public sealed partial class SettingsViewModel : ObservableObject, IViewModelInitializable
     {
         private readonly ISettingsRepository _settingsRepository;
         private readonly ThemeSettingsManager _themeSettingsManager;
@@ -29,7 +31,8 @@ namespace ColorMixer.Application.ViewModels
             DarkMode = await _settingsRepository.GetSetting<bool>(SettingsHelper.DARK_MODE);
             HighContrast = await _settingsRepository.GetSetting<bool>(SettingsHelper.HIGHT_CONTRAST);
             UseOsTheme = await _settingsRepository.GetSetting<bool>(SettingsHelper.USE_OS_THEME);
-            SelectedUiCulture = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_UI_CULTURE);
+            string currentUiCulture = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_UI_CULTURE);
+            SelectedCultureIndex = Array.IndexOf(Cultures, Cultures.First(x => x.Name == currentUiCulture));
         }
 
         [ObservableProperty]
@@ -45,20 +48,20 @@ namespace ColorMixer.Application.ViewModels
         private bool _useOsTheme;
 
         [ObservableProperty]
-        private string _selectedUiCulture;
+        private CultureInfo _selectedUiCulture;
 
         /// <summary>
         /// MahApps Metro themes list: 
         /// https://mahapps.com/docs/themes/usage
         /// </summary>
-        public List<string> Themes { get; } = new List<string>()
+        public IReadOnlyList<string> Themes { get; } = new List<string>()
         {
             "Red", "Green", "Blue", "Purple", "Orange", "Lime", "Emerald", "Teal", "Cyan", "Cobalt", "Indigo",
             "Violet", "Pink", "Magenta", "Crimson", "Amber", "Yellow", "Brown", "Olive", "Steel", "Mauve", "Taupe", "Sienna"
         };
 
 
-        public List<string> Languages { get; } = new List<string>()
+        public IReadOnlyList<string> Languages { get; } = new List<string>()
         {
             "Русский язык", "Deutch", "English"
         };
@@ -85,6 +88,7 @@ namespace ColorMixer.Application.ViewModels
             set
             {
                 SetProperty(ref _selectedCultureIndex, value);
+                SelectedUiCulture = Cultures[value];
                 LocalizationService.Instance.SetCulture(Cultures[value]);
             }
         }
@@ -93,7 +97,7 @@ namespace ColorMixer.Application.ViewModels
         private async Task ApplyChanges()
         {
             await ApplyThemeSettingsIfNeeded();
-            await _settingsRepository.SaveSettingIfChanged<string>(SettingsHelper.SELECTED_UI_CULTURE, SelectedUiCulture);
+            await _settingsRepository.SaveSettingIfChanged<string>(SettingsHelper.SELECTED_UI_CULTURE, SelectedUiCulture.Name);
         }
 
 
