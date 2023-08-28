@@ -38,11 +38,6 @@ namespace ColorMixer.Storage.Migrations.SettingsDb
                         },
                         new
                         {
-                            Key = "HIGHT_CONTRAST",
-                            Value = "false"
-                        },
-                        new
-                        {
                             Key = "USE_OS_THEME",
                             Value = "true"
                         },

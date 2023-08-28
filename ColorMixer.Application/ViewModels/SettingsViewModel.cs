@@ -16,23 +16,40 @@ namespace ColorMixer.Application.ViewModels
     {
         private readonly ISettingsRepository _settingsRepository;
         private readonly ThemeSettingsManager _themeSettingsManager;
+        private readonly IViewManager _viewManager;
 
 #pragma warning disable CS8618
-        public SettingsViewModel(ISettingsRepository settingsRepository, ThemeSettingsManager themeSettingsManager)
+        public SettingsViewModel(
+            ISettingsRepository settingsRepository, 
+            ThemeSettingsManager themeSettingsManager,
+            IViewManager viewManager)
 #pragma warning restore CS8618
         {
             _settingsRepository = settingsRepository;
             _themeSettingsManager = themeSettingsManager;
+            _viewManager = viewManager;
         }
 
         public async Task OnFirstOpen()
         {
             SelectedTheme = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_THEME);
             DarkMode = await _settingsRepository.GetSetting<bool>(SettingsHelper.DARK_MODE);
-            HighContrast = await _settingsRepository.GetSetting<bool>(SettingsHelper.HIGHT_CONTRAST);
             UseOsTheme = await _settingsRepository.GetSetting<bool>(SettingsHelper.USE_OS_THEME);
             string currentUiCulture = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_UI_CULTURE);
             SelectedCultureIndex = Array.IndexOf(Cultures, Cultures.First(x => x.Name == currentUiCulture));
+            ActualizeSelectedThemeIndex();
+        }
+
+        private void ActualizeSelectedThemeIndex()
+        {
+            for (int i = 0; i < Themes.Count; i++)
+            {
+                if (string.Equals(Themes.ElementAt(i), SelectedTheme))
+                {
+                    SelectedThemeIndex = i;
+                    break;
+                }
+            }
         }
 
         [ObservableProperty]
@@ -40,9 +57,6 @@ namespace ColorMixer.Application.ViewModels
 
         [ObservableProperty]
         private bool _darkMode;
-
-        [ObservableProperty]
-        private bool _highContrast;
 
         [ObservableProperty]
         private bool _useOsTheme;
@@ -93,6 +107,18 @@ namespace ColorMixer.Application.ViewModels
             }
         }
 
+        private int _selectedThemeIndex;
+        public int SelectedThemeIndex
+        {
+            get => _selectedThemeIndex;
+            set
+            {
+                SetProperty(ref _selectedThemeIndex, value);
+                SelectedTheme = Themes[value];
+            }
+        }
+
+
         [RelayCommand]
         private async Task ApplyChanges()
         {
@@ -105,19 +131,19 @@ namespace ColorMixer.Application.ViewModels
         {
             if (!await _settingsRepository.SaveSettingIfChanged<string>(SettingsHelper.SELECTED_THEME, SelectedTheme)
                 && !await _settingsRepository.SaveSettingIfChanged<bool>(SettingsHelper.DARK_MODE, DarkMode)
-                && !await _settingsRepository.SaveSettingIfChanged<bool>(SettingsHelper.HIGHT_CONTRAST, HighContrast)
                 && !await _settingsRepository.SaveSettingIfChanged<bool>(SettingsHelper.USE_OS_THEME, UseOsTheme))
             {
                 return;
             }
 
             await _themeSettingsManager.ApplyCurrentThemeSettings();
+            Close();
         }
 
         [RelayCommand]
         private void Close()
         {
-            
+            _viewManager.Close(this);
         }
     }
 }

@@ -16,7 +16,6 @@ namespace ColorMixer.Storage.Services
         {
             modelBuilder.Entity<SettingsModel>().HasData(
                 new SettingsModel { Key = SettingsHelper.DARK_MODE, Value = "false" },
-                new SettingsModel { Key = SettingsHelper.HIGHT_CONTRAST, Value = "false" },
                 new SettingsModel { Key = SettingsHelper.USE_OS_THEME, Value = "true" },
                 new SettingsModel { Key = SettingsHelper.SELECTED_THEME, Value = "Blue" },
                 new SettingsModel { Key = SettingsHelper.SELECTED_UI_CULTURE, Value = null }

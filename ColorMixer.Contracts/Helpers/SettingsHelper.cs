@@ -11,10 +11,6 @@
         /// </summary>
         public const string SELECTED_THEME = "SELECTED_THEME";
         /// <summary>
-        /// In case USE_OS_THEME is false - apply value of HIGHT_CONTRAST (bool) to SELECTED_THEME.
-        /// </summary>
-        public const string HIGHT_CONTRAST = "HIGHT_CONTRAST";
-        /// <summary>
         /// In case USE_OS_THEME is false - apply value of DARK_MODE (bool) to SELECTED_THEME.
         /// </summary>
         public const string DARK_MODE = "DARK_MODE";

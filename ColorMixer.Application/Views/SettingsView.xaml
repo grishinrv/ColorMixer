@@ -4,14 +4,29 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ColorMixer.Application.Views"
-            xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
+             xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="labelStyle"
+                   TargetType="Label">
+                <Setter Property="Margin" Value="2,4,2,0" />
+            </Style>
+
+            <Style x:Key="selectorStyle"
+                   TargetType="Control">
+                <Setter Property="Margin" Value="2,0,2,4" />
+            </Style>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="160" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -20,16 +35,54 @@
         </Grid.RowDefinitions>
 
         <StackPanel 
+            Margin="4"
             Grid.Column="1"
             Orientation="Vertical">
-            <Label Content="{helpers:Translate setting_selected_ui_culture}" />
-
+            <Label Content="{helpers:Translate setting_selected_ui_culture}" 
+                   Style="{StaticResource labelStyle}"/>
             <ComboBox 
                 SelectedIndex="{Binding SelectedCultureIndex, Mode=TwoWay}"
+                Style="{StaticResource selectorStyle}"
                 ItemsSource="{Binding Languages, Mode=OneTime}" >
             </ComboBox>
 
+            <Label 
+                Content="{helpers:Translate setting_sync_os}" 
+                Style="{StaticResource labelStyle}"/>
+            <CheckBox 
+                IsChecked="{Binding UseOsTheme, Mode=TwoWay}"
+                Style="{StaticResource selectorStyle}" />
+
+            <Label 
+                Content="{helpers:Translate setting_selected_theme}" 
+                Style="{StaticResource labelStyle}"
+                IsEnabled="{Binding UseOsTheme, Converter={helpers:InvertBoolConverter}, Mode=OneWay}"/>
+            <ComboBox 
+                SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"
+                Style="{StaticResource selectorStyle}"
+                ItemsSource="{Binding Themes, Mode=OneTime}" 
+                IsEnabled="{Binding UseOsTheme, Converter={helpers:InvertBoolConverter}, Mode=OneWay}">
+            </ComboBox>
+
+            <Label 
+                Content="{helpers:Translate setting_dark_mode}" 
+                Style="{StaticResource labelStyle}"
+                IsEnabled="{Binding UseOsTheme, Converter={helpers:InvertBoolConverter}, Mode=OneWay}"/>
+            <CheckBox 
+                IsChecked="{Binding DarkMode, Mode=TwoWay}"
+                Style="{StaticResource selectorStyle}"
+                IsEnabled="{Binding UseOsTheme, Converter={helpers:InvertBoolConverter}, Mode=OneWay}" />
+
+
         </StackPanel>
+
+        <Button 
+            Grid.Column="1"
+            Grid.Row="2"
+            Margin="4"
+            Width="120"
+            Command="{Binding CloseCommand}"
+            Content="{helpers:Translate cancel}" />
 
         <Button 
             Grid.Column="2"

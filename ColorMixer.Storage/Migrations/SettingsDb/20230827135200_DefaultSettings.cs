@@ -18,7 +18,6 @@ namespace ColorMixer.Storage.Migrations.SettingsDb
                 values: new object[,]
                 {
                     { "DARK_MODE", "false" },
-                    { "HIGHT_CONTRAST", "false" },
                     { "SELECTED_THEME", "Blue" },
                     { "SELECTED_UI_CULTURE", null },
                     { "USE_OS_THEME", "true" }
@@ -32,11 +31,6 @@ namespace ColorMixer.Storage.Migrations.SettingsDb
                 table: "Settings",
                 keyColumn: "Key",
                 keyValue: "DARK_MODE");
-
-            migrationBuilder.DeleteData(
-                table: "Settings",
-                keyColumn: "Key",
-                keyValue: "HIGHT_CONTRAST");
 
             migrationBuilder.DeleteData(
                 table: "Settings",
