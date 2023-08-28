@@ -75,4 +75,10 @@
     <data name="color_set" xml:space="preserve">
         <value>Color set</value>
     </data>
+    <data name="color_choose" xml:space="preserve">
+        <value>Choose color:</value>
+    </data>
+    <data name="add_element" xml:space="preserve">
+        <value>Add item</value>
+    </data>
 </root>

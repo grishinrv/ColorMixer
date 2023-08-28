@@ -158,5 +158,17 @@ namespace ColorMixer.Contracts.Localization {
                 return ResourceManager.GetString("color_set", resourceCulture);
             }
         }
+        
+        internal static string color_choose {
+            get {
+                return ResourceManager.GetString("color_choose", resourceCulture);
+            }
+        }
+        
+        internal static string add_element {
+            get {
+                return ResourceManager.GetString("add_element", resourceCulture);
+            }
+        }
     }
 }
