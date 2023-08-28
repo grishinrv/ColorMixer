@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ColorMixer.Contracts.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ColorMixer.Application.Views
 {
@@ -23,6 +13,23 @@ namespace ColorMixer.Application.Views
         public ColorMixerView()
         {
             InitializeComponent();
+            Binding binding = new Binding("[color_set]");
+            binding.Mode = BindingMode.OneWay;
+            binding.Source = LocalizationService.Instance;
+            BindingOperations.SetBinding(this, TitleProperty, binding);
         }
+
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(
+                nameof(Title),
+                typeof(string),
+                typeof(ColorMixerView),
+                new PropertyMetadata("Defaul color set name"));
     }
 }
