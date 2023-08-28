@@ -5,8 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using ColorMixer.Application.Views;
-using System.Windows.Controls;
-using System;
 using ColorMixer.Contracts.Exceptions;
 using System.Windows.Threading;
 
@@ -43,7 +41,9 @@ namespace ColorMixer.Application
                 view.DataContext = viewModel;
                 return viewModel;
             });
-            services.AddTransient<SettingsViewModel>();
+            services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<ViewManager>();
+            services.AddSingleton<IViewManager>(s => s.GetService<ViewManager>()!);
             services.AddTransient<ColorMixerViewModel>();
 
             new ColorMixerStorageModule().ConfigureServices(services);

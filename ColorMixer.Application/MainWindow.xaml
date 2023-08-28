@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:view="clr-namespace:ColorMixer.Application.Views" 
+    xmlns:local="clr-namespace:ColorMixer.Application" 
     xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
@@ -46,6 +47,8 @@
         HamburgerWidth="48"
         ItemTemplate="{StaticResource HamburgerMenuItem}"
         OptionsItemTemplate="{StaticResource HamburgerMenuItem}"
+        SelectedIndex="{Binding SelectedHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
+        SelectedOptionsIndex="{Binding SelectedHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
         ItemInvoked="HamburgerMenu_OnItemInvoked"
         FontSize="16">
 

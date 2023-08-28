@@ -1,11 +1,6 @@
 ﻿using ColorMixer.Application.Services;
-using ColorMixer.Application.ViewModels;
-using CommunityToolkit.Mvvm.ComponentModel;
 using MahApps.Metro.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+using System.Windows;
 
 namespace ColorMixer.Application
 {
@@ -14,34 +9,35 @@ namespace ColorMixer.Application
     /// </summary>
     public sealed partial class MainWindow : MetroWindow
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ViewModelResolver _viewModelResolver;
-        public MainWindow(IServiceProvider serviceProvider)
+        private readonly ViewManager _viewManager;
+        public MainWindow(ViewManager viewManager)
         {
-            _serviceProvider = serviceProvider;
-            _viewModelResolver = serviceProvider.GetRequiredService<ViewModelResolver>();
+            _viewManager = viewManager;
             InitializeComponent();
+            _viewManager.OnCurrentViewChanged += s =>
+            {
+                HamburgerMenuControl.Content = s?.Tag;
+                if (s == null) 
+                    SelectedHamburgerIndex = -1;
+            };
         }
 
-
-        private async void HamburgerMenu_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
+        private void HamburgerMenu_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
-            try
-            {
-                Control view = (Control)((HamburgerMenuItem)e.InvokedItem).Tag;
-                ObservableObject viewModel = _viewModelResolver.Invoke(view);
-                if (viewModel is IViewModelInitializable initializable)
-                {
-                    await initializable.OnFirstOpen();
-                }
-
-                HamburgerMenuControl.Content = e.InvokedItem;
-            }
-            catch (Exception ex)
-            {
-                // todo log
-                Environment.Exit(1);
-            }
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            _viewManager.SwitchViewRequested((HamburgerMenuIconItem)e.InvokedItem);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
+
+
+        public int SelectedHamburgerIndex
+        {
+            get { return (int)GetValue(SelectedHamburgerIndexProperty); }
+            set { SetValue(SelectedHamburgerIndexProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedHamburgerIndexProperty =
+            DependencyProperty.Register(nameof(SelectedHamburgerIndex), typeof(int), typeof(MainWindow), new PropertyMetadata(-1));
+
     }
 }
