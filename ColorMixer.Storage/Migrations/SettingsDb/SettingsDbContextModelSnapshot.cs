@@ -53,7 +53,8 @@ namespace ColorMixer.Storage.Migrations.SettingsDb
                         },
                         new
                         {
-                            Key = "SELECTED_UI_CULTURE"
+                            Key = "SELECTED_UI_CULTURE",
+                            Value = "en-Us"
                         });
                 });
 #pragma warning restore 612, 618
