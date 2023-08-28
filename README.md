@@ -59,4 +59,5 @@ dotnet build
 * Installer / uninstaller
 * Allow user to create his own custom theme
 * Allow copying of color parameters
-* Suuport setting of initial window size
+* Support setting of initial window size
+* Support Color Nodes removal

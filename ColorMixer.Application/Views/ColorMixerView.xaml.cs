@@ -86,9 +86,8 @@ namespace ColorMixer.Application.Views
         {
             if (_isDown && e.Source == MixingCanvas)
             {
-                Point mousePosition = e.GetPosition(MixingCanvas);
                 TextBox? target = MixingCanvas.FindChildByTypeAndPoint<TextBox>(e.GetPosition(App.Current.MainWindow));
-                
+
                 if (target != null
                     && _lastTouchedTextBox != null
                     && _lastTouchedTextBox.Background is SolidColorBrush leftElementBrush
@@ -118,9 +117,12 @@ namespace ColorMixer.Application.Views
                     }
 
                     AddNewColoredElement(mixedTop, mixedLeft, calculatedColor);
+                    DragFinished(true);
                 }
-                DragFinished(false);
-
+                else 
+                {
+                    DragFinished(false);
+                }
                 _isDragging = false;
                 _isDown = false;
                 e.Handled = true;
