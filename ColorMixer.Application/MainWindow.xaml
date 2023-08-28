@@ -10,7 +10,7 @@
     xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
-    Title="Color Mixer" Height="450" Width="800">
+    Title="Color Mixer" Height="900" Width="1200">
     <mah:MetroWindow.Resources>
         <ResourceDictionary>
 
