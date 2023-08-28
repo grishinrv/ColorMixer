@@ -17,17 +17,18 @@ namespace ColorMixer.Application.Services
         {
             bool syncWithOs = await _settingsRepository.GetSetting<bool>(SettingsHelper.USE_OS_THEME);
             if (syncWithOs)
-                ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
+            {
+                ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode | ThemeSyncMode.SyncWithAccent;
+                ThemeManager.Current.SyncTheme();
+            }
             else
             {
+                ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.DoNotSync;
                 string themeName = await _settingsRepository.GetSetting<string>(SettingsHelper.SELECTED_THEME);
                 bool isDarkMode = await _settingsRepository.GetSetting<bool>(SettingsHelper.DARK_MODE);
-                bool isHighContrast = await _settingsRepository.GetSetting<bool>(SettingsHelper.HIGHT_CONTRAST);
                 themeName = isDarkMode ? $"Dark.{themeName}" : $"Light.{themeName}";
-                ThemeManager.Current.ChangeTheme(App.Current, themeName, isHighContrast);
+                ThemeManager.Current.ChangeTheme(App.Current, themeName);
             }
-
-            ThemeManager.Current.SyncTheme();
         }
     }
 }
