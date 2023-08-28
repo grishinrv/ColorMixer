@@ -7,6 +7,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using ColorMixer.Application.Controls;
+using ColorMixer.Contracts.Models;
+using ColorMixer.Application.Presentation;
 
 namespace ColorMixer.Application.Views
 {
@@ -82,11 +84,63 @@ namespace ColorMixer.Application.Views
 
         private void MixingCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDown)
+            if (_isDown && e.Source == MixingCanvas)
             {
+                Point mousePosition = e.GetPosition(MixingCanvas);
+                TextBox? target = MixingCanvas.FindChildByTypeAndPoint<TextBox>(e.GetPosition(App.Current.MainWindow));
+                
+                if (target != null
+                    && _lastTouchedTextBox != null
+                    && _lastTouchedTextBox.Background is SolidColorBrush leftElementBrush
+                    && target.Background is SolidColorBrush rightElementBrush)
+                {
+                    double targetTop = Canvas.GetTop(target);
+                    double targetLeft = Canvas.GetLeft(target);
+
+                    double mixedTop = (targetTop + _originalTop) / 2;
+                    double mixedLeft = (targetLeft + _originalLeft) / 2;
+
+                    MixingType mixingType = (MixingType)MixingTypeCombobox.SelectedIndex + 1;
+                    Color calculatedColor = default(Color);
+                    switch (mixingType)
+                    {
+                        case MixingType.Additive:
+                            calculatedColor = Color.Add(leftElementBrush.Color, rightElementBrush.Color);
+                            break;
+                        case MixingType.Subtractive:
+                            calculatedColor = Color.Subtract(leftElementBrush.Color, rightElementBrush.Color);
+                            break;
+                        case MixingType.Average:
+                            calculatedColor = CalculateBlendedColor(leftElementBrush.Color, rightElementBrush.Color);
+                            break;
+                        default:
+                            throw new InvalidOperationException();
+                    }
+
+                    AddNewColoredElement(mixedTop, mixedLeft, calculatedColor);
+                }
                 DragFinished(false);
+
+                _isDragging = false;
+                _isDown = false;
                 e.Handled = true;
             }
+        }
+
+
+        /// <summary>
+        /// Calculate the average of color components (R, G, B)
+        /// </summary>
+        /// <param name="color1"></param>
+        /// <param name="color2"></param>
+        /// <returns></returns>
+        private Color CalculateBlendedColor(Color color1, Color color2)
+        {
+            byte avgRed = (byte)((color1.R + color2.R) / 2);
+            byte avgGreen = (byte)((color1.G + color2.G) / 2);
+            byte avgBlue = (byte)((color1.B + color2.B) / 2);
+
+            return Color.FromRgb(avgRed, avgGreen, avgBlue);
         }
 
         private void DragFinished(bool cancelled)
@@ -103,20 +157,22 @@ namespace ColorMixer.Application.Views
                 }
                 _overlayElement = null;
             }
-            _isDragging = false;
-            _isDown = false;
         }
 
-        private void AddNewColoredElement()
+        private void AddNewColoredElement(double top, double left, Color? color = null)
         {
             TextBox tb = new TextBox { Text = "Drag or select to change color" };
-            Canvas.SetTop(tb, _originalTop);
-            Canvas.SetLeft(tb, _originalLeft);
+            Canvas.SetTop(tb, top);
+            Canvas.SetLeft(tb, left);
             MixingCanvas.Children.Add(tb);
-            if (MixingColorPicker.SelectedColor != null)
+            // try use calculated color
+            if (color == null)
+                color = MixingColorPicker.SelectedColor;
+            // try use color from picker
+            if (color != null)
             {
-                tb.Background = new SolidColorBrush(MixingColorPicker.SelectedColor.Value);
-                tb.Text = MixingColorPicker.SelectedColor.ToString();
+                tb.Background = new SolidColorBrush(color.Value);
+                tb.Text = color.ToString();
             }
         }
 
@@ -187,7 +243,7 @@ namespace ColorMixer.Application.Views
 
         private void AddElementButtonClick(object sender, RoutedEventArgs e)
         {
-            AddNewColoredElement();
+            AddNewColoredElement(_originalTop, _originalLeft);
         }
     }
 }
