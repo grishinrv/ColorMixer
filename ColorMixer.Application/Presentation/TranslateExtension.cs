@@ -1,7 +1,5 @@
 ﻿using ColorMixer.Contracts.Services;
-using System;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace ColorMixer.Application.Presentation
 {
@@ -9,18 +7,23 @@ namespace ColorMixer.Application.Presentation
     /// Localizaing extension. XAML exapmle:
     /// Text="{helpers:Translate Key=SomeKey}"
     /// </summary>
-    public sealed class TranslateExtension : MarkupExtension
+    public sealed class TranslateExtension : Binding
     {
-        public string? Key { get; set; }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public TranslateExtension()
         {
-            return new Binding
-            {
-                Mode = BindingMode.OneWay,
-                Path = new System.Windows.PropertyPath($"[{Key}]"),
-                Source = LocalizationService.Instance
-            };
+            Initialize();
+        }
+
+        public TranslateExtension(string key)
+            : base($"[{key}]")
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            this.Source = LocalizationService.Instance;
+            this.Mode = BindingMode.OneWay;
         }
     }
 }
