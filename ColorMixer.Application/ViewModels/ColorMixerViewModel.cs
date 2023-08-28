@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace ColorMixer.Application.ViewModels
@@ -7,7 +8,9 @@ namespace ColorMixer.Application.ViewModels
     {
         public ColorMixerViewModel()
         {
-            Color color = new Color();
+            //Color color = new Color();
         }
+
+        //public ObservableCollection<>
     }
 }
