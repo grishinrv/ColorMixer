@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ColorMixer.Contracts\ColorMixer.Contracts.csproj" />
-    <ProjectReference Include="..\ColorMixer.Domain\ColorMixer.Domain.csproj" />
     <ProjectReference Include="..\ColorMixer.Storage\ColorMixer.Storage.csproj" />
   </ItemGroup>
 
