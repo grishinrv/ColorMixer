@@ -1,4 +1,11 @@
-﻿using MahApps.Metro.Controls;
+﻿using ColorMixer.Application.Services;
+using ColorMixer.Application.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
+using MahApps.Metro.Controls;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace ColorMixer.Application
 {
@@ -7,14 +14,34 @@ namespace ColorMixer.Application
     /// </summary>
     public sealed partial class MainWindow : MetroWindow
     {
-        public MainWindow()
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ViewModelResolver _viewModelResolver;
+        public MainWindow(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+            _viewModelResolver = serviceProvider.GetRequiredService<ViewModelResolver>();
             InitializeComponent();
         }
 
-        private void HamburgerMenu_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
+
+        private async void HamburgerMenu_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
-            HamburgerMenuControl.Content = e.InvokedItem;
+            try
+            {
+                Control view = (Control)((HamburgerMenuItem)e.InvokedItem).Tag;
+                ObservableObject viewModel = _viewModelResolver.Invoke(view);
+                if (viewModel is IViewModelInitializable initializable)
+                {
+                    await initializable.OnFirstOpen();
+                }
+
+                HamburgerMenuControl.Content = e.InvokedItem;
+            }
+            catch (Exception ex)
+            {
+                // todo log
+                Environment.Exit(1);
+            }
         }
     }
 }
