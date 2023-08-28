@@ -22,6 +22,7 @@ namespace ColorMixer.Application.Views
         private double _originalTop;
         private CircleAdorner _overlayElement;
         private Point _startPoint;
+        private TextBox? _lastTouchedTextBox;
 
         public ColorMixerView()
         {
@@ -48,7 +49,7 @@ namespace ColorMixer.Application.Views
 
         public void OnLoaded(object sender, RoutedEventArgs e)
         {
-            TextBox tb = new TextBox { Text = "This is a TextBox. Drag and drop me" };
+            TextBox tb = new TextBox { Text = "Drag or select to change color" };
             Canvas.SetTop(tb, 100);
             Canvas.SetLeft(tb, 100);
 
@@ -64,9 +65,10 @@ namespace ColorMixer.Application.Views
 
         private void MixingColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
-            if (e.NewValue != null)
-            { 
-                
+            if (e.NewValue != null && _lastTouchedTextBox != null)
+            {
+                _lastTouchedTextBox.Background = new SolidColorBrush(e.NewValue.Value);
+                _lastTouchedTextBox.Text = e.NewValue.ToString();
             }
         }
 
@@ -162,6 +164,11 @@ namespace ColorMixer.Application.Views
                 _originalElement = e.Source as UIElement;
                 MixingCanvas.CaptureMouse();
                 e.Handled = true;
+
+                if (e.Source is TextBox textBox)
+                {
+                    _lastTouchedTextBox = textBox;
+                }
             }
         }
 
