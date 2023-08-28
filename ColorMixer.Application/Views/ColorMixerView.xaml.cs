@@ -107,6 +107,19 @@ namespace ColorMixer.Application.Views
             _isDown = false;
         }
 
+        private void AddNewColoredElement()
+        {
+            TextBox tb = new TextBox { Text = "Drag or select to change color" };
+            Canvas.SetTop(tb, _originalTop);
+            Canvas.SetLeft(tb, _originalLeft);
+            MixingCanvas.Children.Add(tb);
+            if (MixingColorPicker.SelectedColor != null)
+            {
+                tb.Background = new SolidColorBrush(MixingColorPicker.SelectedColor.Value);
+                tb.Text = MixingColorPicker.SelectedColor.ToString();
+            }
+        }
+
         ///// <summary>
         ///// Forbides to drop outside the canvas.
         ///// </summary>
@@ -172,5 +185,9 @@ namespace ColorMixer.Application.Views
             }
         }
 
+        private void AddElementButtonClick(object sender, RoutedEventArgs e)
+        {
+            AddNewColoredElement();
+        }
     }
 }

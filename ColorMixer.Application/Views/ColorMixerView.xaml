@@ -3,18 +3,75 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ColorMixer.Application.Views" 
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="OnLoaded">
-    <StackPanel x:Name="MixingStakPanel">
-        <mah:ColorPicker 
-            x:Name="MixingColorPicker"
-            Width="180"
-            Height="40" />
-        
-        <Canvas x:Name="MixingCanvas"/>
+    <UserControl.Resources>
+        <ResourceDictionary>
 
-    </StackPanel>
+            <Style x:Key="labelStyle"
+                   TargetType="Label">
+                <Setter Property="Margin" Value="8,8,2,2" />
+            </Style>
+
+            <Style x:Key="selectorStyle"
+                   TargetType="Control">
+                <Setter Property="Margin" Value="2,2,4,2" />
+            </Style>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel 
+            Orientation="Horizontal" 
+            FlowDirection="LeftToRight">
+
+            <Label 
+                Content="{helpers:Translate color_choose}" 
+                Style="{StaticResource labelStyle}"/>
+            <mah:ColorPicker 
+                x:Name="MixingColorPicker"
+                Style="{StaticResource selectorStyle}"
+                Width="220"
+                Height="20" />
+
+            <Label 
+                Content="{helpers:Translate mixing_type}" 
+                Style="{StaticResource labelStyle}"/>
+            <ComboBox
+                x:Name="MixingType"
+                Style="{StaticResource selectorStyle}"
+                Width="160"
+                Height="30"
+                SelectedItem="0">
+                <ComboBoxItem Content="{helpers:Translate mixing_addictive}" />
+                <ComboBoxItem Content="{helpers:Translate mixing_subtractive}" />
+                <ComboBoxItem Content="{helpers:Translate mixing_average}" />
+            </ComboBox>
+
+            <Button
+                Margin="8,2,4,2"
+                Click="AddElementButtonClick"
+                Height="30"
+                Width="120"
+                Content="{helpers:Translate add_element}" />
+
+
+        </StackPanel>
+
+        <StackPanel 
+            Grid.Row="1"
+            x:Name="MixingStakPanel">
+
+            <Canvas x:Name="MixingCanvas"/>
+
+        </StackPanel>
+    </Grid>
 </UserControl>
