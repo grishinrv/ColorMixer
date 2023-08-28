@@ -10,7 +10,7 @@
     xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
-    Title="Color Mixer" Height="900" Width="1200">
+    Title="Color Mixer" Height="700" Width="1200">
     <mah:MetroWindow.Resources>
         <ResourceDictionary>
 
@@ -48,7 +48,7 @@
         ItemTemplate="{StaticResource HamburgerMenuItem}"
         OptionsItemTemplate="{StaticResource HamburgerMenuItem}"
         SelectedIndex="{Binding SelectedHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
-        SelectedOptionsIndex="{Binding SelectedHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
+        SelectedOptionsIndex="{Binding SelectedOptionsHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
         ItemInvoked="HamburgerMenu_OnItemInvoked"
         FontSize="16">
 
@@ -103,7 +103,7 @@
         </mah:HamburgerMenu.ContentTemplate>
 
         <mah:HamburgerMenu.ItemsSource>
-            <mah:HamburgerMenuItemCollection>
+            <mah:HamburgerMenuItemCollection x:Name="TopItemsColletion">
 
                 <mah:HamburgerMenuIconItem
                     Label="Color Mixer">
@@ -128,7 +128,7 @@
         </mah:HamburgerMenu.ItemsSource>
 
         <mah:HamburgerMenu.OptionsItemsSource>
-            <mah:HamburgerMenuItemCollection>
+            <mah:HamburgerMenuItemCollection x:Name="BottomItemsColletion">
 
                 <mah:HamburgerMenuIconItem
                     Label="{helpers:Translate settings}">
