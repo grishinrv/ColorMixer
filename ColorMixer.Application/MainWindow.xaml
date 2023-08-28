@@ -59,7 +59,7 @@
                     VerticalAlignment="Center"
                     FontSize="16"
                     Foreground="White"
-                    Text="Menu" />
+                    Text="{helpers:Translate menu}" />
             </DataTemplate>
         </mah:HamburgerMenu.HamburgerMenuHeaderTemplate>
 
@@ -115,11 +115,11 @@
                             Height="22"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Kind="ColorHelper" />
+                            Kind="SelectColor" />
                     </mah:HamburgerMenuIconItem.Icon>
 
                     <mah:HamburgerMenuIconItem.Tag>
-                        <view:ColorMixerView></view:ColorMixerView>
+                        <view:ColorMixerView/>
                     </mah:HamburgerMenuIconItem.Tag>
 
                 </mah:HamburgerMenuIconItem>
@@ -144,7 +144,7 @@
                     </mah:HamburgerMenuIconItem.Icon>
 
                     <mah:HamburgerMenuIconItem.Tag>
-                        <view:SettingsView></view:SettingsView>
+                        <view:SettingsView/>
                     </mah:HamburgerMenuIconItem.Tag>
 
                 </mah:HamburgerMenuIconItem>

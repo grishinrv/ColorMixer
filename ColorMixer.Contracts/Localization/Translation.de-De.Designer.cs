@@ -146,5 +146,17 @@ namespace ColorMixer.Contracts.Localization {
                 return ResourceManager.GetString("setting_selected_ui_culture", resourceCulture);
             }
         }
+        
+        internal static string menu {
+            get {
+                return ResourceManager.GetString("menu", resourceCulture);
+            }
+        }
+        
+        internal static string color_set {
+            get {
+                return ResourceManager.GetString("color_set", resourceCulture);
+            }
+        }
     }
 }

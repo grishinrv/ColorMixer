@@ -69,4 +69,10 @@
     <data name="setting_selected_ui_culture" xml:space="preserve">
         <value>Ausgewählte UI-Kultur:</value>
     </data>
+    <data name="menu" xml:space="preserve">
+        <value>Menü</value>
+    </data>
+    <data name="color_set" xml:space="preserve">
+        <value>Farbsatz</value>
+    </data>
 </root>
