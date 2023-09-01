@@ -37,7 +37,8 @@ dotnet build
 * DI
 
 ### Known Issues ###
-* The ColorMixerView.xaml.cs is a pile of mud (no time, sorry, but infrastructure code is rather good)
+* AdonerDecoration logic should be put inside ColorNodeControl
+* No tree-structure validation
 * No logging
 * 12 Warnings (easy to fix, though)
 * No unit tests
