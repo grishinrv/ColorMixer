@@ -13,7 +13,8 @@ namespace ColorMixer.Application.Presentation
         {
             if (value is MixingType mixing)
             {
-                return (int)mixing - 1;
+                int index = (int)mixing;
+                return --index;
             }
             throw new ArgumentException(nameof(value));
         }
@@ -22,7 +23,8 @@ namespace ColorMixer.Application.Presentation
         {
             if (value is int mixingIndex)
             {
-                return (MixingType)(++mixingIndex);
+                MixingType result = (MixingType)((byte)++mixingIndex);
+                return result;
             }
 
             throw new ArgumentException(nameof(value));

@@ -6,9 +6,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using ColorMixer.Application.Controls;
-using ColorMixer.Contracts.Models;
 using ColorMixer.Application.Presentation;
-using CommunityToolkit.Mvvm.Input;
 using ColorMixer.Application.Models;
 
 namespace ColorMixer.Application.Views
@@ -26,19 +24,23 @@ namespace ColorMixer.Application.Views
         private Point _startPoint;
         private Canvas _mixingCanvas;
 
-        #region Constructor
+        #region Initialization
         public ColorMixerView()
         {
             InitializeComponent();
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
             Binding titleBinding = new Binding("[color_set]");
             titleBinding.Mode = BindingMode.OneWay;
             titleBinding.Source = LocalizationService.Instance;
             BindingOperations.SetBinding(this, TitleProperty, titleBinding);
 
-            Binding mixgommandBinding = new Binding("MixCommand");
-            mixgommandBinding.Mode = BindingMode.OneWay;
-            mixgommandBinding.Source = DataContext;
-            BindingOperations.SetBinding(this, MixColorsCommandProperty, mixgommandBinding);
+            Binding mixCommandBinding = new Binding("MixCommand");
+            mixCommandBinding.Mode = BindingMode.OneWay;
+            mixCommandBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, MixColorsCommandProperty, mixCommandBinding);
 
             Binding selectedNodeBinding = new Binding("Selected");
             selectedNodeBinding.Mode = BindingMode.TwoWay;
@@ -49,12 +51,22 @@ namespace ColorMixer.Application.Views
             targetNodeBinding.Mode = BindingMode.TwoWay;
             targetNodeBinding.Source = DataContext;
             BindingOperations.SetBinding(this, TargetColorNodeProperty, targetNodeBinding);
-
-            Binding selectedMixingTypeBinding = new Binding("SelectedMixingType");
-            selectedMixingTypeBinding.Mode = BindingMode.OneWay;
-            selectedMixingTypeBinding.Source = DataContext;
-            BindingOperations.SetBinding(this, TargetColorNodeProperty, selectedMixingTypeBinding);
         }
+
+        public void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _mixingCanvas = ColorNodesItemsPresenterControl.GetItemsPanel<Canvas>()!;
+            if (_mixingCanvas == null)
+            {
+                throw new InvalidOperationException("Not possible to perform mixing without canvas");
+            }
+
+            _mixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
+            _mixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
+            _mixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
+            PreviewKeyDown += ColorMixer_PreviewKeyDown;
+        }
+
         #endregion
         #region Dependecy properties
         public string Title
@@ -63,9 +75,9 @@ namespace ColorMixer.Application.Views
             set { SetValue(TitleProperty, value); }
         }
 
-        public RelayCommand<ColorMixingEventArgs> MixColorsCommand
+        public ICommand MixColorsCommand
         {
-            get { return (RelayCommand<ColorMixingEventArgs>)GetValue(MixColorsCommandProperty); }
+            get { return (ICommand)GetValue(MixColorsCommandProperty); }
             set { SetValue(MixColorsCommandProperty, value); }
         }
 
@@ -80,12 +92,6 @@ namespace ColorMixer.Application.Views
             set { SetValue(TargetColorNodeProperty, value); }
         }
 
-        public MixingType SelectedMixingType
-        {
-            get { return (MixingType)GetValue(SelectedMixingTypeProperty); }
-            set { SetValue(SelectedMixingTypeProperty, value); }
-        }
-
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(
                 nameof(Title),
@@ -96,7 +102,7 @@ namespace ColorMixer.Application.Views
         public static readonly DependencyProperty MixColorsCommandProperty =
             DependencyProperty.Register(
                 nameof(MixColorsCommand), 
-                typeof(RelayCommand<ColorMixingEventArgs>), 
+                typeof(ICommand), 
                 typeof(ColorMixerView), 
                 new PropertyMetadata(null));
 
@@ -114,35 +120,14 @@ namespace ColorMixer.Application.Views
                 typeof(ColorMixerView), 
                 new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedMixingTypeProperty =
-            DependencyProperty.Register(
-                nameof(SelectedMixingType), 
-                typeof(MixingType), 
-                typeof(ColorMixerView), 
-                new PropertyMetadata(MixingType.Undefined));
-
         #endregion
-
-        public void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            _mixingCanvas = ColorNodesItemsPresenterControl.GetItemsPanel<Canvas>()!;
-            if (_mixingCanvas == null) 
-            {
-                throw new InvalidOperationException("Not possible to perform mixing without canvas");
-            }
-
-            _mixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
-            _mixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
-            _mixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
-            PreviewKeyDown += ColorMixer_PreviewKeyDown;
-        }
-
 
         private void MixingCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.Source is ColorNodeControl originalElement)
             {
                 _originalElement = originalElement;
+                SelectedColorNode = (IColorNode)_originalElement.DataContext;
                 _isDown = true;
                 _startPoint = e.GetPosition(_mixingCanvas);
                 _mixingCanvas.CaptureMouse();
@@ -160,14 +145,13 @@ namespace ColorMixer.Application.Views
 
         private void MixingCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDown && e.Source == _mixingCanvas)
+            if (_isDown && _isDragging && e.Source == _mixingCanvas)
             {
                 ColorNodeControl? target = _mixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
                 if (target != null && target.DataContext is IColorNode targetContext)
                 {
                     TargetColorNode = targetContext;
-                    //MixColorsCommand.Execute(
-                    //    new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
+                    MixColorsCommand.Execute(null);
                     DragFinished(true);
                 }
                 else

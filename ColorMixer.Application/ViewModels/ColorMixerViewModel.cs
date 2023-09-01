@@ -12,6 +12,7 @@ namespace ColorMixer.Application.ViewModels
         public ColorMixerViewModel()
         {
             ColorNodes.Add(Selected);
+            SelectedMixingType = MixingType.Subtractive;
         }
 
         public ObservableCollection<ColorNodeViewModel> ColorNodes { get; } = new ObservableCollection<ColorNodeViewModel>();
@@ -34,13 +35,13 @@ namespace ColorMixer.Application.ViewModels
         }
 
         [RelayCommand]
-        public void Mix(ColorMixingEventArgs mixingEventArgs)
+        public void Mix()
         {
-            if (mixingEventArgs.Left == mixingEventArgs.Right)
+            if (Selected == Target || Target == null)
                 return;
 
             ColorNodeViewModel mixingResult = ColorNodeViewModel.Mix(
-                mixingEventArgs.Left, mixingEventArgs.Right, mixingEventArgs.Operation);
+                Selected, Target, SelectedMixingType);
 
             ColorNodes.Add(mixingResult);
         }
