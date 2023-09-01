@@ -6,8 +6,7 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Loaded="OnLoaded">
+             d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -39,6 +38,7 @@
             <mah:ColorPicker 
                 x:Name="MixingColorPicker"
                 Style="{StaticResource selectorStyle}"
+                SelectedColor="{Binding PickedColor, Mode=TwoWay}"
                 Width="220"
                 Height="20" />
 
@@ -50,7 +50,7 @@
                 Style="{StaticResource selectorStyle}"
                 Width="160"
                 Height="30"
-                SelectedIndex="0">
+                SelectedIndex="{Binding SelectedMixingType, Mode=TwoWay, Converter={helpers:MixingTypeToIndexConverter}}">
                 <ComboBoxItem Content="{helpers:Translate mixing_addictive}" />
                 <ComboBoxItem Content="{helpers:Translate mixing_subtractive}" />
                 <ComboBoxItem Content="{helpers:Translate mixing_average}" />
@@ -58,7 +58,7 @@
 
             <Button
                 Margin="12,2,4,2"
-                Click="AddElementButtonClick"
+                Command="{Binding AddNewParentlessColorNodeCommand}"
                 Height="30"
                 Width="120"
                 Content="{helpers:Translate add_element}" />
@@ -70,7 +70,32 @@
             Grid.Row="1"
             x:Name="MixingStackPanel">
 
-            <Canvas x:Name="MixingCanvas"/>
+            <ItemsControl 
+                x:Name="MixingCanvas"
+                ItemsSource="{Binding Path=ColorNodes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource MahApps.Brushes.Border.NonActive}"
+                                BorderThickness="1.5">
+                            <TextBlock Text="{Binding Color}" 
+                                   Width="80" Height="80" 
+                                   Background="{Binding Color}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
 
         </StackPanel>
     </Grid>

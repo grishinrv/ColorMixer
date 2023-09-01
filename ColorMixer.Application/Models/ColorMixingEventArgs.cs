@@ -6,13 +6,13 @@ namespace ColorMixer.Application.Models
 {
     public sealed class ColorMixingEventArgs : EventArgs
     {
-        public ColorNodeViewModel Left { get; private set; }
-        public ColorNodeViewModel Right { get; private set; }
+        public IColorNode Left { get; private set; }
+        public IColorNode Right { get; private set; }
         public MixingType Operation { get; private set; }
 
         public ColorMixingEventArgs(
-            ColorNodeViewModel left, 
-            ColorNodeViewModel right, 
+            IColorNode left,
+            IColorNode right, 
             MixingType operation)
         {
             Left = left;

@@ -1,11 +1,12 @@
-﻿using ColorMixer.Contracts.Exceptions;
+﻿using ColorMixer.Application.Models;
+using ColorMixer.Contracts.Exceptions;
 using ColorMixer.Contracts.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Windows.Media;
 
 namespace ColorMixer.Application.ViewModels
 {
-    public sealed partial class ColorNodeViewModel : ObservableObject
+    public sealed partial class ColorNodeViewModel : ObservableObject, IColorNode
     {
         [ObservableProperty]
         private double _top;
@@ -15,12 +16,12 @@ namespace ColorMixer.Application.ViewModels
         private Color _color = Colors.White;
 
         public MixingType Operation { get; }
-        public ColorNodeViewModel? LeftParent { get; }
-        public ColorNodeViewModel? RightParent { get; }
+        public IColorNode? LeftParent { get; }
+        public IColorNode? RightParent { get; }
 
         private ColorNodeViewModel(
-            ColorNodeViewModel leftParent, 
-            ColorNodeViewModel rightParent, 
+            IColorNode leftParent,
+            IColorNode rightParent, 
             MixingType operation)
         {
             Operation = operation;
@@ -41,11 +42,14 @@ namespace ColorMixer.Application.ViewModels
                 default:
                     throw new InvalidMixingOperationException(operation);
             }
+
+            Top = (leftParent.Top + rightParent.Top) / 2;
+            Left = (leftParent.Left + rightParent.Left) / 2;
         }
 
         public static ColorNodeViewModel Mix(
-            ColorNodeViewModel leftParent,
-            ColorNodeViewModel rightParent,
+            IColorNode leftParent,
+            IColorNode rightParent,
             MixingType operation) => new ColorNodeViewModel(leftParent, rightParent, operation);
 
         public ColorNodeViewModel()

@@ -9,6 +9,8 @@ using System.Windows.Media;
 using ColorMixer.Application.Controls;
 using ColorMixer.Contracts.Models;
 using ColorMixer.Application.Presentation;
+using CommunityToolkit.Mvvm.Input;
+using ColorMixer.Application.Models;
 
 namespace ColorMixer.Application.Views
 {
@@ -24,21 +26,65 @@ namespace ColorMixer.Application.Views
         private double _originalTop;
         private CircleAdorner _overlayElement;
         private Point _startPoint;
-        private TextBox? _lastTouchedTextBox;
 
+        #region Constructor
         public ColorMixerView()
         {
             InitializeComponent();
-            Binding binding = new Binding("[color_set]");
-            binding.Mode = BindingMode.OneWay;
-            binding.Source = LocalizationService.Instance;
-            BindingOperations.SetBinding(this, TitleProperty, binding);
-        }
+            Binding titleBinding = new Binding("[color_set]");
+            titleBinding.Mode = BindingMode.OneWay;
+            titleBinding.Source = LocalizationService.Instance;
+            BindingOperations.SetBinding(this, TitleProperty, titleBinding);
 
+            Binding mixgommandBinding = new Binding("MixCommand");
+            mixgommandBinding.Mode = BindingMode.OneWay;
+            mixgommandBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, MixColorsCommandProperty, mixgommandBinding);
+
+            Binding selectedNodeBinding = new Binding("Selected");
+            selectedNodeBinding.Mode = BindingMode.TwoWay;
+            selectedNodeBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, SelectedColorNodeProperty, selectedNodeBinding);
+
+            Binding targetNodeBinding = new Binding("Target");
+            targetNodeBinding.Mode = BindingMode.TwoWay;
+            targetNodeBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, TargetColorNodeProperty, targetNodeBinding);
+
+            Binding selectedMixingTypeBinding = new Binding("SelectedMixingType");
+            selectedMixingTypeBinding.Mode = BindingMode.OneWay;
+            selectedMixingTypeBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, TargetColorNodeProperty, selectedMixingTypeBinding);
+        }
+        #endregion
+        #region Dependecy properties
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
+        }
+
+        public RelayCommand<ColorMixingEventArgs> MixColorsCommand
+        {
+            get { return (RelayCommand<ColorMixingEventArgs>)GetValue(MixColorsCommandProperty); }
+            set { SetValue(MixColorsCommandProperty, value); }
+        }
+
+        public IColorNode SelectedColorNode
+        {
+            get { return (IColorNode)GetValue(SelectedColorNodeProperty); }
+            set { SetValue(SelectedColorNodeProperty, value); }
+        }
+        public IColorNode TargetColorNode
+        {
+            get { return (IColorNode)GetValue(TargetColorNodeProperty); }
+            set { SetValue(TargetColorNodeProperty, value); }
+        }
+
+        public MixingType SelectedMixingType
+        {
+            get { return (MixingType)GetValue(SelectedMixingTypeProperty); }
+            set { SetValue(SelectedMixingTypeProperty, value); }
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -48,29 +94,56 @@ namespace ColorMixer.Application.Views
                 typeof(ColorMixerView),
                 new PropertyMetadata("Defaul color set name"));
 
+        public static readonly DependencyProperty MixColorsCommandProperty =
+            DependencyProperty.Register(
+                nameof(MixColorsCommand), 
+                typeof(RelayCommand<ColorMixingEventArgs>), 
+                typeof(ColorMixerView), 
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedColorNodeProperty =
+            DependencyProperty.Register(
+                nameof(SelectedColorNode),
+                typeof(IColorNode),
+                typeof(ColorMixerView),
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty TargetColorNodeProperty =
+            DependencyProperty.Register(
+                nameof(TargetColorNode),
+                typeof(IColorNode), 
+                typeof(ColorMixerView), 
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedMixingTypeProperty =
+            DependencyProperty.Register(
+                nameof(SelectedMixingType), 
+                typeof(MixingType), 
+                typeof(ColorMixerView), 
+                new PropertyMetadata(MixingType.Undefined));
+
+        #endregion
 
         public void OnLoaded(object sender, RoutedEventArgs e)
         {
-            TextBox tb = new TextBox { Text = "Drag or select to change color" };
-            Canvas.SetTop(tb, 100);
-            Canvas.SetLeft(tb, 100);
-
-            MixingCanvas.Children.Add(tb);
-
             MixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
             MixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
             MixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
-            //MixingCanvas.DragOver += MixingCanvas_DragOver;
             PreviewKeyDown += ColorMixer_PreviewKeyDown;
-            MixingColorPicker.SelectedColorChanged += MixingColorPicker_SelectedColorChanged;
         }
 
-        private void MixingColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        private void MixingCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.NewValue != null && _lastTouchedTextBox != null)
+            if (e.Source == MixingCanvas)
             {
-                _lastTouchedTextBox.Background = new SolidColorBrush(e.NewValue.Value);
-                _lastTouchedTextBox.Text = e.NewValue.ToString();
+            }
+            else
+            {
+                _isDown = true;
+                _startPoint = e.GetPosition(MixingCanvas);
+                _originalElement = e.Source as UIElement;
+                MixingCanvas.CaptureMouse();
+                e.Handled = true;
             }
         }
 
@@ -88,38 +161,15 @@ namespace ColorMixer.Application.Views
             {
                 TextBox? target = MixingCanvas.FindChildByTypeAndPoint<TextBox>(e.GetPosition(App.Current.MainWindow));
 
-                if (target != null
-                    && _lastTouchedTextBox != null
-                    && _lastTouchedTextBox.Background is SolidColorBrush leftElementBrush
-                    && target.Background is SolidColorBrush rightElementBrush)
+                MixColorsCommand.Execute(
+                    new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
+
+                if (target != null)
                 {
-                    double targetTop = Canvas.GetTop(target);
-                    double targetLeft = Canvas.GetLeft(target);
 
-                    double mixedTop = (targetTop + _originalTop) / 2;
-                    double mixedLeft = (targetLeft + _originalLeft) / 2;
-
-                    MixingType mixingType = (MixingType)MixingTypeCombobox.SelectedIndex + 1;
-                    Color calculatedColor = default(Color);
-                    switch (mixingType)
-                    {
-                        case MixingType.Additive:
-                            calculatedColor = Color.Add(leftElementBrush.Color, rightElementBrush.Color);
-                            break;
-                        case MixingType.Subtractive:
-                            calculatedColor = Color.Subtract(leftElementBrush.Color, rightElementBrush.Color);
-                            break;
-                        case MixingType.Average:
-                            calculatedColor = CalculateBlendedColor(leftElementBrush.Color, rightElementBrush.Color);
-                            break;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-
-                    AddNewColoredElement(mixedTop, mixedLeft, calculatedColor);
                     DragFinished(true);
                 }
-                else 
+                else
                 {
                     DragFinished(false);
                 }
@@ -129,21 +179,6 @@ namespace ColorMixer.Application.Views
             }
         }
 
-
-        /// <summary>
-        /// Calculate the average of color components (R, G, B)
-        /// </summary>
-        /// <param name="color1"></param>
-        /// <param name="color2"></param>
-        /// <returns></returns>
-        private Color CalculateBlendedColor(Color color1, Color color2)
-        {
-            byte avgRed = (byte)((color1.R + color2.R) / 2);
-            byte avgGreen = (byte)((color1.G + color2.G) / 2);
-            byte avgBlue = (byte)((color1.B + color2.B) / 2);
-
-            return Color.FromRgb(avgRed, avgGreen, avgBlue);
-        }
 
         private void DragFinished(bool cancelled)
         {
@@ -160,33 +195,6 @@ namespace ColorMixer.Application.Views
                 _overlayElement = null;
             }
         }
-
-        private void AddNewColoredElement(double top, double left, Color? color = null)
-        {
-            TextBox tb = new TextBox { Text = "Drag or select to change color" };
-            Canvas.SetTop(tb, top);
-            Canvas.SetLeft(tb, left);
-            MixingCanvas.Children.Add(tb);
-            // try use calculated color
-            if (color == null)
-                color = MixingColorPicker.SelectedColor;
-            // try use color from picker
-            if (color != null)
-            {
-                tb.Background = new SolidColorBrush(color.Value);
-                tb.Text = color.ToString();
-            }
-        }
-
-        ///// <summary>
-        ///// Forbides to drop outside the canvas.
-        ///// </summary>
-        //private void MixingCanvas_DragOver(object sender, DragEventArgs e)
-        //{
-        //    if (e.Source != MixingCanvas)
-        //        e.Effects = DragDropEffects.None;
-        //}
-
         private void MixingCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (_isDown)
@@ -223,29 +231,5 @@ namespace ColorMixer.Application.Views
             _overlayElement.TopOffset = currentPosition.Y - _startPoint.Y;
         }
 
-        private void MixingCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.Source == MixingCanvas)
-            {
-            }
-            else
-            {
-                _isDown = true;
-                _startPoint = e.GetPosition(MixingCanvas);
-                _originalElement = e.Source as UIElement;
-                MixingCanvas.CaptureMouse();
-                e.Handled = true;
-
-                if (e.Source is TextBox textBox)
-                {
-                    _lastTouchedTextBox = textBox;
-                }
-            }
-        }
-
-        private void AddElementButtonClick(object sender, RoutedEventArgs e)
-        {
-            AddNewColoredElement(_originalTop, _originalLeft);
-        }
     }
 }
