@@ -17,7 +17,7 @@ namespace ColorMixer.Application.ViewModels
         public ObservableCollection<ColorNodeViewModel> ColorNodes { get; } = new ObservableCollection<ColorNodeViewModel>();
 
         [ObservableProperty]
-        private ColorNodeViewModel _selected = new ColorNodeViewModel{ Left = 100, Top = 100 };
+        private ColorNodeViewModel _selected = new ColorNodeViewModel{ Left = 300, Top = 300 };
         [ObservableProperty]
         private ColorNodeViewModel? _target;
         [ObservableProperty]

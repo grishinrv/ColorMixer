@@ -25,7 +25,15 @@
                 Mode=OneWay, 
                 Converter={StaticResource ColorToSolidColorBrush_ValueConverter},
                 RelativeSource={RelativeSource FindAncestor,
-                    AncestorType={x:Type local:ColorNodeControl}}}" />
+                    AncestorType={x:Type local:ColorNodeControl}}}" 
+            Canvas.Top="{Binding PositionTop, 
+                Mode=OneWay, 
+                RelativeSource={RelativeSource FindAncestor,
+                    AncestorType={x:Type local:ColorNodeControl}}}"
+            Canvas.Left="{Binding PositionLeft, 
+                Mode=OneWay, 
+                RelativeSource={RelativeSource FindAncestor,
+                    AncestorType={x:Type local:ColorNodeControl}}}"  />
     </Border>
     
 </UserControl>

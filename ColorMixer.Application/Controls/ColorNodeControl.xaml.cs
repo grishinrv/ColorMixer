@@ -1,18 +1,6 @@
-﻿using ColorMixer.Application.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ColorMixer.Application.Controls
 {
@@ -31,6 +19,16 @@ namespace ColorMixer.Application.Controls
             get { return (Color)GetValue(ColorProperty); }
             set { SetValue(ColorProperty, value); }
         }
+        public double PositionTop
+        {
+            get { return (double)GetValue(PositionTopProperty); }
+            set { SetValue(PositionTopProperty, value); }
+        }
+        public double PositionLeft
+        {
+            get { return (double)GetValue(PositionLeftProperty); }
+            set { SetValue(PositionLeftProperty, value); }
+        }
 
         public static readonly DependencyProperty ColorProperty =
             DependencyProperty.Register(
@@ -38,5 +36,19 @@ namespace ColorMixer.Application.Controls
                 typeof(Color), 
                 typeof(ColorNodeControl), 
                 new PropertyMetadata(Colors.White));
+
+        public static readonly DependencyProperty PositionTopProperty =
+            DependencyProperty.Register(
+                nameof(PositionTop),
+                typeof(double),
+                typeof(ColorNodeControl),
+                new PropertyMetadata(0.0));
+
+        public static readonly DependencyProperty PositionLeftProperty =
+            DependencyProperty.Register(
+                nameof(PositionLeft), 
+                typeof(double), 
+                typeof(ColorNodeControl), 
+                new PropertyMetadata(0.0));
     }
 }
