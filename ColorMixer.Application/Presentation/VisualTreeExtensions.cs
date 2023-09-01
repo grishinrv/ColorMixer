@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace ColorMixer.Application.Presentation
@@ -61,6 +62,36 @@ namespace ColorMixer.Application.Presentation
             }
 
             return false;
+        }
+
+        public static T? GetItemsPanel<T>(this DependencyObject itemsControl)
+           where T : DependencyObject
+        {
+            ItemsPresenter itemsPresenter = GetVisualChild<ItemsPresenter>(itemsControl)!;
+            T itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as T;
+            return itemsPanel;
+        }
+
+        private static T? GetVisualChild<T>(DependencyObject parent) 
+            where T : Visual
+        {
+            T? child = default(T);
+
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if (child == null)
+                {
+                    child = GetVisualChild<T>(v);
+                }
+                if (child != null)
+                {
+                    break;
+                }
+            }
+            return child;
         }
     }
 }

@@ -20,11 +20,12 @@ namespace ColorMixer.Application.Views
     {
         private bool _isDown;
         private bool _isDragging;
-        private UIElement _originalElement;
+        private ColorNodeControl? _originalElement;
         private double _originalLeft;
         private double _originalTop;
         private CircleAdorner _overlayElement;
         private Point _startPoint;
+        private Canvas _mixingCanvas;
 
         #region Constructor
         public ColorMixerView()
@@ -125,23 +126,27 @@ namespace ColorMixer.Application.Views
 
         public void OnLoaded(object sender, RoutedEventArgs e)
         {
-            MixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
-            MixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
-            MixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
+            _mixingCanvas = ColorNodesItemsPresenterControl.GetItemsPanel<Canvas>()!;
+            if (_mixingCanvas == null) 
+            {
+                throw new InvalidOperationException("Not possible to perform mixing without canvas");
+            }
+
+            _mixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
+            _mixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
+            _mixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
             PreviewKeyDown += ColorMixer_PreviewKeyDown;
         }
 
+
         private void MixingCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Source == MixingCanvas)
+            if (e.Source is ColorNodeControl originalElement)
             {
-            }
-            else
-            {
+                _originalElement = originalElement;
                 _isDown = true;
-                _startPoint = e.GetPosition(MixingCanvas);
-                _originalElement = e.Source as UIElement;
-                MixingCanvas.CaptureMouse();
+                _startPoint = e.GetPosition(_mixingCanvas);
+                _mixingCanvas.CaptureMouse();
                 e.Handled = true;
             }
         }
@@ -156,19 +161,14 @@ namespace ColorMixer.Application.Views
 
         private void MixingCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDown && e.Source == MixingCanvas)
+            if (_isDown && e.Source == _mixingCanvas)
             {
-                ColorNodeControl? target = MixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
+                ColorNodeControl? target = _mixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
                 if (target != null && target.DataContext is IColorNode targetContext)
                 {
                     TargetColorNode = targetContext;
                     MixColorsCommand.Execute(
                         new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
-                }
-
-                if (target != null)
-                {
-
                     DragFinished(true);
                 }
                 else
@@ -202,9 +202,9 @@ namespace ColorMixer.Application.Views
             if (_isDown)
             {
                 if ((_isDragging == false) &&
-                    ((Math.Abs(e.GetPosition(MixingCanvas).X - _startPoint.X) >
+                    ((Math.Abs(e.GetPosition(_mixingCanvas).X - _startPoint.X) >
                       SystemParameters.MinimumHorizontalDragDistance) ||
-                     (Math.Abs(e.GetPosition(MixingCanvas).Y - _startPoint.Y) >
+                     (Math.Abs(e.GetPosition(_mixingCanvas).Y - _startPoint.Y) >
                       SystemParameters.MinimumVerticalDragDistance)))
                 {
                     DragStarted();
@@ -227,7 +227,7 @@ namespace ColorMixer.Application.Views
 
         private void DragMoved()
         {
-            Point currentPosition = Mouse.GetPosition(MixingCanvas);
+            Point currentPosition = Mouse.GetPosition(_mixingCanvas);
 
             _overlayElement.LeftOffset = currentPosition.X - _startPoint.X;
             _overlayElement.TopOffset = currentPosition.Y - _startPoint.Y;

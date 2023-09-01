@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
-             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              xmlns:controls="clr-namespace:ColorMixer.Application.Controls"
              mc:Ignorable="d" 
+             Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -72,7 +72,7 @@
             x:Name="MixingStackPanel">
 
             <ItemsControl 
-                x:Name="MixingCanvas"
+                x:Name="ColorNodesItemsPresenterControl"
                 ItemsSource="{Binding Path=ColorNodes}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -81,8 +81,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=TwoWay}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=TwoWay}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
