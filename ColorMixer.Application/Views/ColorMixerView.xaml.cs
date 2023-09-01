@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using ColorMixer.Application.Controls;
 using ColorMixer.Contracts.Models;
 using ColorMixer.Application.Presentation;
@@ -159,10 +158,13 @@ namespace ColorMixer.Application.Views
         {
             if (_isDown && e.Source == MixingCanvas)
             {
-                TextBox? target = MixingCanvas.FindChildByTypeAndPoint<TextBox>(e.GetPosition(App.Current.MainWindow));
-
-                MixColorsCommand.Execute(
-                    new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
+                ColorNodeControl? target = MixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
+                if (target != null && target.DataContext is IColorNode targetContext)
+                {
+                    TargetColorNode = targetContext;
+                    MixColorsCommand.Execute(
+                        new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
+                }
 
                 if (target != null)
                 {
@@ -230,6 +232,5 @@ namespace ColorMixer.Application.Views
             _overlayElement.LeftOffset = currentPosition.X - _startPoint.X;
             _overlayElement.TopOffset = currentPosition.Y - _startPoint.Y;
         }
-
     }
 }

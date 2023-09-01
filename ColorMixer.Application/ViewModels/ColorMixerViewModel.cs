@@ -22,8 +22,16 @@ namespace ColorMixer.Application.ViewModels
         private ColorNodeViewModel? _target;
         [ObservableProperty]
         private MixingType _selectedMixingType;
-        [ObservableProperty]
         private Color _pickedColor;
+        public Color PickedColor
+        {
+            get => _pickedColor;
+            set
+            {
+                SetProperty(ref _pickedColor, value);
+                Selected.Color = value;
+            }
+        }
 
         [RelayCommand]
         public void Mix(ColorMixingEventArgs mixingEventArgs)
@@ -42,6 +50,5 @@ namespace ColorMixer.Application.ViewModels
         {
             ColorNodes.Add(new ColorNodeViewModel { Left = 200, Top = 200, Color = PickedColor});
         }
-
     }
 }

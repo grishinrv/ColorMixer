@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:helpers="clr-namespace:ColorMixer.Application.Presentation" 
+             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             xmlns:controls="clr-namespace:ColorMixer.Application.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -63,7 +65,6 @@
                 Width="120"
                 Content="{helpers:Translate add_element}" />
 
-
         </StackPanel>
 
         <StackPanel 
@@ -86,16 +87,10 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="{DynamicResource MahApps.Brushes.Border.NonActive}"
-                                BorderThickness="1.5">
-                            <TextBlock Text="{Binding Color}" 
-                                   Width="80" Height="80" 
-                                   Background="{Binding Color}" />
-                        </Border>
+                        <controls:ColorNodeControl Color="{Binding Color, Mode=OneWay}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
 
         </StackPanel>
     </Grid>
