@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ColorMixer.Application.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Windows.Media;
 
 namespace ColorMixer.Application.ViewModels
 {
@@ -8,9 +8,23 @@ namespace ColorMixer.Application.ViewModels
     {
         public ColorMixerViewModel()
         {
-            //Color color = new Color();
         }
 
-        //public ObservableCollection<>
+        public ObservableCollection<ColorNodeViewModel> ColorNodes { get; } = new ObservableCollection<ColorNodeViewModel>()
+        { 
+            new ColorNodeViewModel{ Left = 100, Top = 100 }
+        };
+
+        public void Mix(object sender, ColorMixingEventArgs mixingEventArgs)
+        {
+            if (mixingEventArgs.Left == mixingEventArgs.Right)
+                return;
+
+            ColorNodeViewModel mixingResult = ColorNodeViewModel.Mix(
+                mixingEventArgs.Left, mixingEventArgs.Right, mixingEventArgs.Operation);
+
+            ColorNodes.Add(mixingResult);
+        }
+
     }
 }
