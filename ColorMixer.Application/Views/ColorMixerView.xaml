@@ -79,6 +79,14 @@
                         <Canvas />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=OneWay}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=OneWay}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <controls:ColorNodeControl 

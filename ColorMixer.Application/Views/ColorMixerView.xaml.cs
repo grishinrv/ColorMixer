@@ -21,8 +21,7 @@ namespace ColorMixer.Application.Views
         private bool _isDown;
         private bool _isDragging;
         private ColorNodeControl? _originalElement;
-        private double _originalLeft;
-        private double _originalTop;
+        // todo - move this and show logic into ColorNodeControl
         private CircleAdorner _overlayElement;
         private Point _startPoint;
         private Canvas _mixingCanvas;
@@ -167,8 +166,8 @@ namespace ColorMixer.Application.Views
                 if (target != null && target.DataContext is IColorNode targetContext)
                 {
                     TargetColorNode = targetContext;
-                    MixColorsCommand.Execute(
-                        new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
+                    //MixColorsCommand.Execute(
+                    //    new ColorMixingEventArgs(SelectedColorNode, TargetColorNode, SelectedMixingType));
                     DragFinished(true);
                 }
                 else
@@ -191,8 +190,8 @@ namespace ColorMixer.Application.Views
 
                 if (cancelled == false)
                 {
-                    Canvas.SetTop(_originalElement, _originalTop + _overlayElement.TopOffset);
-                    Canvas.SetLeft(_originalElement, _originalLeft + _overlayElement.LeftOffset);
+                    _originalElement!.PositionTop += _overlayElement.TopOffset;
+                    _originalElement!.PositionLeft += _overlayElement.LeftOffset;
                 }
                 _overlayElement = null;
             }
@@ -218,9 +217,7 @@ namespace ColorMixer.Application.Views
         private void DragStarted()
         {
             _isDragging = true;
-            _originalLeft = Canvas.GetLeft(_originalElement);
-            _originalTop = Canvas.GetTop(_originalElement);
-            _overlayElement = new CircleAdorner(_originalElement);
+            _overlayElement = new CircleAdorner(_originalElement!);
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(_originalElement);
             layer.Add(_overlayElement);
         }
