@@ -1,7 +1,6 @@
 ﻿using ColorMixer.Application.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MahApps.Metro.Controls;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
