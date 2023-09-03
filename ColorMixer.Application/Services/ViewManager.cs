@@ -43,7 +43,7 @@ namespace ColorMixer.Application.Services
             catch (Exception ex)
             {
                 // todo log
-                Environment.Exit(1);
+                throw;
             }
         }
 
