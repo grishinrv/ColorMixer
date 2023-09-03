@@ -1,4 +1,4 @@
-﻿using ColorMixer.Application.Models;
+﻿using ColorMixer.Application.Services;
 using ColorMixer.Contracts.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,8 +9,11 @@ namespace ColorMixer.Application.ViewModels
 {
     public sealed partial class ColorMixerViewModel : ObservableObject
     {
-        public ColorMixerViewModel()
+        private readonly IViewManager _viewManager;
+
+        public ColorMixerViewModel(IViewManager viewManager)
         {
+            _viewManager = viewManager;
             ColorNodes.Add(Selected);
             SelectedMixingType = MixingType.Subtractive;
         }
@@ -47,9 +50,15 @@ namespace ColorMixer.Application.ViewModels
         }
 
         [RelayCommand]
-        public void AddNewParentlessColorNode()
+        private void AddNewParentlessColorNode()
         {
             ColorNodes.Add(new ColorNodeViewModel { Left = 200, Top = 200, Color = PickedColor});
+        }
+
+        [RelayCommand]
+        private void Close()
+        {
+            _viewManager.Close(this);
         }
     }
 }

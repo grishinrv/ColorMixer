@@ -27,6 +27,8 @@ namespace ColorMixer.Application
                     {
                         SelectedOptionsHamburgerIndex = -1;
                     }
+
+                    HamburgerMenuControl.Content = null;
                 }
                 else 
                 {

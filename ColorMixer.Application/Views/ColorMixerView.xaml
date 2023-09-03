@@ -29,6 +29,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
         <StackPanel 
@@ -99,5 +100,13 @@
             </ItemsControl>
 
         </StackPanel>
+
+        <Button 
+            Grid.Row="2"
+            Margin="4"
+            Width="120"
+            Command="{Binding CloseCommand}"
+            Content="{helpers:Translate cancel}" />
+        
     </Grid>
 </UserControl>

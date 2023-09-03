@@ -9,6 +9,7 @@ namespace ColorMixer.Application.Services
 {
     public sealed class ViewManager : IViewManager
     {
+        private HamburgerMenuItem? _previousViewContainer;
         private HamburgerMenuItem? _currentViewContainer;
         private ObservableObject? _currentViewModel;
         private ViewModelResolver _viewModelResolver;
@@ -31,9 +32,9 @@ namespace ColorMixer.Application.Services
                 {
                     await initializable.OnFirstOpen();
                 }
-                HamburgerMenuItem? previousViewContainer = _currentViewContainer;
+                HamburgerMenuItem? _previousViewContainer = _currentViewContainer;
                 _currentViewContainer = viewContainer;
-                OnCurrentViewChanged?.Invoke(viewContainer, previousViewContainer);
+                OnCurrentViewChanged?.Invoke(viewContainer, _previousViewContainer);
             }
             catch (Exception ex)
             {
@@ -46,10 +47,10 @@ namespace ColorMixer.Application.Services
         {
             if (_currentViewModel == viewModel)
             {
-                HamburgerMenuItem? previousViewContainer = _currentViewContainer;
+                HamburgerMenuItem? _previousViewContainer = _currentViewContainer;
                 _currentViewModel = null;
                 _currentViewContainer = null;
-                OnCurrentViewChanged?.Invoke(_currentViewContainer, previousViewContainer);
+                OnCurrentViewChanged?.Invoke(_currentViewContainer, _previousViewContainer);
             }
         }
     }
