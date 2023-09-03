@@ -3,6 +3,7 @@ using ColorMixer.Contracts.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ColorMixer.Application.ViewModels
@@ -25,6 +26,8 @@ namespace ColorMixer.Application.ViewModels
         [ObservableProperty]
         private ColorNodeViewModel? _target;
         [ObservableProperty]
+        private ColorNodeViewModel? _mixingResult;
+        [ObservableProperty]
         private MixingType _selectedMixingType;
         private Color _pickedColor;
         public Color PickedColor
@@ -38,15 +41,10 @@ namespace ColorMixer.Application.ViewModels
         }
 
         [RelayCommand]
-        public void Mix()
+        private void Mix()
         {
-            if (Selected == Target || Target == null)
-                return;
-
-            ColorNodeViewModel mixingResult = ColorNodeViewModel.Mix(
-                Selected, Target, SelectedMixingType);
-
-            ColorNodes.Add(mixingResult);
+            MixingResult = ColorNodeViewModel.Mix(Selected, Target!, SelectedMixingType);
+            ColorNodes.Add(MixingResult);
         }
 
         [RelayCommand]
@@ -56,9 +54,9 @@ namespace ColorMixer.Application.ViewModels
         }
 
         [RelayCommand]
-        private void Close()
+        private async Task Close()
         {
-            _viewManager.Close(this);
+            await _viewManager.Close(this);
         }
     }
 }

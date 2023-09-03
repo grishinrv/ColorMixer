@@ -141,9 +141,9 @@ namespace ColorMixer.Application.ViewModels
         }
 
         [RelayCommand]
-        private void Close()
+        private async Task Close()
         {
-            _viewManager.Close(this);
+            await _viewManager.Close(this);
         }
     }
 }
