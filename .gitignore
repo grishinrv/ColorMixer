@@ -198,4 +198,4 @@ obj
 /.idea
 
 # Ignore MacOs X service files
-/.DS_STORE 
+*.DS_STORE 
