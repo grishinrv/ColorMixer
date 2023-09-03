@@ -124,6 +124,7 @@ namespace ColorMixer.Application.ViewModels
         {
             await ApplyThemeSettingsIfNeeded();
             await _settingsRepository.SaveSettingIfChanged<string>(SettingsHelper.SELECTED_UI_CULTURE, SelectedUiCulture.Name);
+            await Close();
         }
 
 
@@ -137,7 +138,6 @@ namespace ColorMixer.Application.ViewModels
             }
 
             await _themeSettingsManager.ApplyCurrentThemeSettings();
-            Close();
         }
 
         [RelayCommand]
