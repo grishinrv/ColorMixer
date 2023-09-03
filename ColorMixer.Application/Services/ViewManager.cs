@@ -21,7 +21,6 @@ namespace ColorMixer.Application.Services
             _viewModelResolver = viewModelResolver;
         }
 
-
         public async ValueTask SwitchViewRequested(HamburgerMenuItem viewContainer)
         {
             try
@@ -48,7 +47,7 @@ namespace ColorMixer.Application.Services
             }
         }
 
-        public void Close(ObservableObject toClose)
+        public async ValueTask Close(ObservableObject toClose)
         {
             ObservableObject topCheck = _viewModelStack.Pop();
             if (topCheck != toClose)
@@ -63,6 +62,18 @@ namespace ColorMixer.Application.Services
             }
 
             OnCurrentViewChanged?.Invoke(previousContainer, closingContainer);
+            if (closingContainer.Tag is IDisposable disposableView)
+            {
+                disposableView.Dispose();
+            }
+            if (toClose is IDisposable disposableViewModel)
+            {
+                disposableViewModel.Dispose();
+            }
+            else if (toClose is IAsyncDisposable asyncDisposableViewModel)
+            { 
+                await asyncDisposableViewModel.DisposeAsync();
+            }
         }
     }
 }

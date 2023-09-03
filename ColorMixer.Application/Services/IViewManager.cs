@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
 
 namespace ColorMixer.Application.Services
 {
@@ -11,6 +12,6 @@ namespace ColorMixer.Application.Services
         /// Closes current view.
         /// </summary>
         /// <param name="viewModel">View model, requesting close.</param>
-        void Close(ObservableObject viewModel);
+        ValueTask Close(ObservableObject viewModel);
     }
 }
