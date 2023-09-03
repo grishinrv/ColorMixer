@@ -8,6 +8,9 @@ using System.Windows.Input;
 using ColorMixer.Application.Controls;
 using ColorMixer.Application.Presentation;
 using ColorMixer.Application.Models;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace ColorMixer.Application.Views
 {
@@ -51,6 +54,11 @@ namespace ColorMixer.Application.Views
             targetNodeBinding.Mode = BindingMode.TwoWay;
             targetNodeBinding.Source = DataContext;
             BindingOperations.SetBinding(this, TargetColorNodeProperty, targetNodeBinding);
+
+            Binding mixingResult = new Binding("MixingResult");
+            mixingResult.Mode = BindingMode.OneWay;
+            mixingResult.Source = DataContext;
+            BindingOperations.SetBinding(this, MixingResultColorNodeProperty, mixingResult);
         }
 
         public void OnLoaded(object sender, RoutedEventArgs e)
@@ -91,13 +99,18 @@ namespace ColorMixer.Application.Views
             get { return (IColorNode)GetValue(TargetColorNodeProperty); }
             set { SetValue(TargetColorNodeProperty, value); }
         }
+        public IColorNode MixingResultColorNode
+        {
+            get { return (IColorNode)GetValue(MixingResultColorNodeProperty); }
+            set { SetValue(MixingResultColorNodeProperty, value); }
+        }
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(
                 nameof(Title),
                 typeof(string),
                 typeof(ColorMixerView),
-                new PropertyMetadata("Defaul color set name"));
+                new PropertyMetadata("Default color set name"));
 
         public static readonly DependencyProperty MixColorsCommandProperty =
             DependencyProperty.Register(
@@ -118,6 +131,13 @@ namespace ColorMixer.Application.Views
                 nameof(TargetColorNode),
                 typeof(IColorNode), 
                 typeof(ColorMixerView), 
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty MixingResultColorNodeProperty =
+            DependencyProperty.Register(
+                nameof(MixingResultColorNode),
+                typeof(IColorNode),
+                typeof(ColorMixerView),
                 new PropertyMetadata(null));
 
         #endregion
@@ -151,7 +171,11 @@ namespace ColorMixer.Application.Views
                 if (target != null && target.DataContext is IColorNode targetContext)
                 {
                     TargetColorNode = targetContext;
-                    MixColorsCommand.Execute(null);
+                    if (TargetColorNode != SelectedColorNode)
+                    {
+                        MixColorsCommand.Execute(null);
+                        CreateRelationLines();
+                    }
                     DragFinished(true);
                 }
                 else
@@ -212,6 +236,43 @@ namespace ColorMixer.Application.Views
 
             _overlayElement.LeftOffset = currentPosition.X - _startPoint.X;
             _overlayElement.TopOffset = currentPosition.Y - _startPoint.Y;
+        }
+
+        private void CreateRelationLines()
+        {
+            CreateRelationLine(SelectedColorNode, MixingResultColorNode);
+            CreateRelationLine(TargetColorNode, MixingResultColorNode);
+        }
+
+        private void CreateRelationLine(IColorNode from, IColorNode to)
+        {
+            Line line = new Line() 
+            { 
+                Stroke = new SolidColorBrush(Colors.Gray),
+                StrokeThickness = 1.35
+            };
+
+            Binding beginXbinding = new Binding("Top");
+            beginXbinding.Mode = BindingMode.OneWay;
+            beginXbinding.Source = from;
+            BindingOperations.SetBinding(line, Line.X1Property, beginXbinding);
+
+            Binding beginYbinding = new Binding("Left");
+            beginYbinding.Mode = BindingMode.OneWay;
+            beginYbinding.Source = from;
+            BindingOperations.SetBinding(line, Line.Y1Property, beginXbinding);
+
+            Binding endXbinding = new Binding("Top");
+            endXbinding.Mode = BindingMode.OneWay;
+            endXbinding.Source = to;
+            BindingOperations.SetBinding(line, Line.X2Property, endXbinding);
+
+            Binding endYbinding = new Binding("Left");
+            endYbinding.Mode = BindingMode.OneWay;
+            endYbinding.Source = to;
+            BindingOperations.SetBinding(line, Line.Y2Property, endYbinding);
+
+
         }
     }
 }
