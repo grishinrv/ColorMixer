@@ -8,6 +8,8 @@ using ColorMixer.Application.Views;
 using ColorMixer.Contracts.Exceptions;
 using System.Windows.Threading;
 using System;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ColorMixer.Application
 {
@@ -42,9 +44,10 @@ namespace ColorMixer.Application
                 view.DataContext = viewModel;
                 return viewModel;
             });
-            services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<ViewManager>();
             services.AddSingleton<IViewManager>(s => s.GetService<ViewManager>()!);
+
+            services.AddTransient<SettingsViewModel>();
             services.AddTransient<ColorMixerViewModel>();
 
             new ColorMixerStorageModule().ConfigureServices(services);
@@ -53,6 +56,9 @@ namespace ColorMixer.Application
         private async void OnStartup(object sender, StartupEventArgs e)
         {
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
             MainWindow mainWindow = _provider.GetService<MainWindow>()!;
             ThemeSettingsManager settingsManager = _provider.GetRequiredService<ThemeSettingsManager>();
             await settingsManager.ApplyCurrentThemeSettings();
@@ -63,6 +69,21 @@ namespace ColorMixer.Application
         private void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // todo log
+            Debugger.Break();
+            Environment.Exit(1);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            // todo log
+            Debugger.Break();
+            Environment.Exit(1);
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            // todo log
+            Debugger.Break();
             Environment.Exit(1);
         }
     }
