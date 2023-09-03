@@ -29,25 +29,24 @@ dotnet build
 * Persistent storage of settings
 * All three mixing types are supported (Additive, Subtractive, Average)
 * Localized for English, Russian and German
-* Async I/O
+* Async I/O (Including view models initialzation and disposal)
 * Supports UI themes 
 * Supports Dark mode
 * Support Sync with OS theme 
 * Modern hamburger layout
 * DI
+* Global exception handling
 
 ### Known Issues ###
 * AdonerDecoration logic should be put inside ColorNodeControl
 * No tree-structure validation
 * No logging
-* 12 Warnings (easy to fix, though)
+* Several Warnings (easy to fix, though)
 * No unit tests
-* No visualization of connections between Color Nodes
 * No visualization of what mixing type was used
 
 ### Future development ideas ###
-* Refactor mixing to MVVM pattern
-* Couple todos to refactor
+* Couple todos to implement
 * Fix issues
 * Extract domain logic to separate project
 * Cross-platform console version
