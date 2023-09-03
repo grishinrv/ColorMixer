@@ -1,4 +1,5 @@
-﻿using ColorMixer.Application.ViewModels;
+﻿using ColorMixer.Application.Models;
+using ColorMixer.Application.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MahApps.Metro.Controls;
 using System;
@@ -13,8 +14,7 @@ namespace ColorMixer.Application.Services
         private readonly Stack<HamburgerMenuItem> _containerStack = new Stack<HamburgerMenuItem>();
         private readonly Stack<ObservableObject> _viewModelStack = new Stack<ObservableObject>();
         private ViewModelResolver _viewModelResolver;
-        // todo named delegate with event args (named params)
-        public event Action<HamburgerMenuItem?, HamburgerMenuItem?> OnCurrentViewChanged;
+        public event HamburgerContentSwitchDelegate OnCurrentViewChanged;
 
         public ViewManager(ViewModelResolver viewModelResolver)
         {
