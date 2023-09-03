@@ -49,7 +49,6 @@
         OptionsItemTemplate="{StaticResource HamburgerMenuItem}"
         SelectedIndex="{Binding SelectedHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
         SelectedOptionsIndex="{Binding SelectedOptionsHamburgerIndex, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Mode=TwoWay}"
-        ItemInvoked="HamburgerMenu_OnItemInvoked"
         FontSize="16">
 
         <mah:HamburgerMenu.HamburgerMenuHeaderTemplate>

@@ -7,6 +7,7 @@ using System.Windows;
 using ColorMixer.Application.Views;
 using ColorMixer.Contracts.Exceptions;
 using System.Windows.Threading;
+using System;
 
 namespace ColorMixer.Application
 {
@@ -61,6 +62,8 @@ namespace ColorMixer.Application
 
         private void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+            // todo log
+            Environment.Exit(1);
         }
     }
 }
