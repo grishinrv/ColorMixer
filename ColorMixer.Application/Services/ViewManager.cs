@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MahApps.Metro.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -9,9 +10,8 @@ namespace ColorMixer.Application.Services
 {
     public sealed class ViewManager : IViewManager
     {
-        private HamburgerMenuItem? _previousViewContainer;
-        private HamburgerMenuItem? _currentViewContainer;
-        private ObservableObject? _currentViewModel;
+        private readonly Stack<HamburgerMenuItem> _containerStack = new Stack<HamburgerMenuItem>();
+        private readonly Stack<ObservableObject> _viewModelStack = new Stack<ObservableObject>();
         private ViewModelResolver _viewModelResolver;
         // todo named delegate with event args (named params)
         public event Action<HamburgerMenuItem?, HamburgerMenuItem?> OnCurrentViewChanged;
@@ -27,14 +27,16 @@ namespace ColorMixer.Application.Services
             try
             {
                 Control view = (Control)viewContainer.Tag;
-                _currentViewModel = _viewModelResolver.Invoke(view);
-                if (_currentViewModel is IViewModelInitializable initializable)
+                ObservableObject topViewModel = _viewModelResolver.Invoke(view);
+                _viewModelStack.Push(topViewModel);
+                if (topViewModel is IViewModelInitializable initializable)
                 {
                     await initializable.OnFirstOpen();
                 }
-                HamburgerMenuItem? _previousViewContainer = _currentViewContainer;
-                _currentViewContainer = viewContainer;
-                OnCurrentViewChanged?.Invoke(viewContainer, _previousViewContainer);
+
+                _containerStack.TryPeek(out HamburgerMenuItem? previous);
+                _containerStack.Push(viewContainer);
+                OnCurrentViewChanged?.Invoke(viewContainer, previous);
             }
             catch (Exception ex)
             {
@@ -43,15 +45,21 @@ namespace ColorMixer.Application.Services
             }
         }
 
-        public void Close(ObservableObject viewModel)
+        public void Close(ObservableObject toClose)
         {
-            if (_currentViewModel == viewModel)
+            ObservableObject topCheck = _viewModelStack.Pop();
+            if (topCheck != toClose)
+                throw new InvalidOperationException("Close called not from UI");
+
+            HamburgerMenuItem closingContainer = _containerStack.Pop();
+            HamburgerMenuItem? previousContainer = null;
+
+            if (_viewModelStack.TryPop(out ObservableObject? _))
             {
-                HamburgerMenuItem? _previousViewContainer = _currentViewContainer;
-                _currentViewModel = null;
-                _currentViewContainer = null;
-                OnCurrentViewChanged?.Invoke(_currentViewContainer, _previousViewContainer);
+                previousContainer = _containerStack.Pop();
             }
+
+            OnCurrentViewChanged?.Invoke(previousContainer, closingContainer);
         }
     }
 }
