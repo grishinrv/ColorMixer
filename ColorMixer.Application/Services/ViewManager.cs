@@ -33,11 +33,11 @@ namespace ColorMixer.Application.Services
                     {
                         await initializable.OnFirstOpen();
                     }
+                    _containerStack.Push(viewContainer);
+                    _viewModelStack.Push((ObservableObject)(view.DataContext));
                 }
 
                 _containerStack.TryPeek(out HamburgerMenuItem? previous);
-                _containerStack.Push(viewContainer);
-                _viewModelStack.Push((ObservableObject)(view.DataContext));
                 OnCurrentViewChanged?.Invoke(viewContainer, previous);
             }
             catch (Exception ex)

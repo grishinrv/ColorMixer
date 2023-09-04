@@ -3,20 +3,20 @@ using ColorMixer.Application.Services;
 using ColorMixer.Contracts.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ColorMixer.Application.ViewModels
 {
-    public sealed partial class ColorMixerViewModel : ObservableObject
+    public sealed partial class ColorMixerViewModel : ObservableObject, IViewModelInitializable, IDisposable
     {
         private readonly IViewManager _viewManager;
 
         public ColorMixerViewModel(IViewManager viewManager)
         {
             _viewManager = viewManager;
-            ColorNodes.Add(Selected);
             SelectedMixingType = MixingType.Subtractive;
         }
 
@@ -58,6 +58,17 @@ namespace ColorMixer.Application.ViewModels
         private async Task Close()
         {
             await _viewManager.Close(this);
+        }
+
+        public Task OnFirstOpen()
+        {
+            ColorNodes.Add(Selected);
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            ColorNodes.Clear();
         }
     }
 }

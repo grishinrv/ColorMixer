@@ -56,7 +56,7 @@ namespace ColorMixer.Application.Views
             BindingOperations.SetBinding(this, TargetColorNodeProperty, targetNodeBinding);
 
             Binding colorNodesBinding = new Binding("ColorNodes");
-            colorNodesBinding.Mode = BindingMode.OneTime;
+            colorNodesBinding.Mode = BindingMode.OneWay;
             colorNodesBinding.Source = DataContext;
             BindingOperations.SetBinding(this, ColorNodesProperty, colorNodesBinding);
         }
@@ -192,8 +192,8 @@ namespace ColorMixer.Application.Views
 
                 if (cancelled == false)
                 {
-                    _originalElement!.PositionTop += _overlayElement.TopOffset;
-                    _originalElement!.PositionLeft += _overlayElement.LeftOffset;
+                    Canvas.SetLeft(_originalElement, Canvas.GetLeft(_originalElement) + _overlayElement.LeftOffset);
+                    Canvas.SetTop(_originalElement, Canvas.GetTop(_originalElement) + _overlayElement.TopOffset);
                 }
                 _overlayElement = null;
             }
@@ -255,13 +255,13 @@ namespace ColorMixer.Application.Views
             Binding endXbinding = new Binding("Top");
             endXbinding.Mode = BindingMode.OneWay;
             endXbinding.Source = to;
-            BindingOperations.SetBinding(line, Line.X2Property, endXbinding);
+            BindingOperations.SetBinding(line, Line.Y2Property, endXbinding);
 
             Binding endYbinding = new Binding("Left");
             endYbinding.Mode = BindingMode.OneWay;
             endYbinding.Source = to;
-            BindingOperations.SetBinding(line, Line.Y2Property, endYbinding);
-
+            BindingOperations.SetBinding(line, Line.X2Property, endYbinding);
+            
             MixingCanvas.Children.Add(line);
         }
 
@@ -291,28 +291,18 @@ namespace ColorMixer.Application.Views
                         Panel.SetZIndex(control, 100);
                         control.DataContext = colorNode;
 
-                        Binding topBinding = new Binding("Top");
-                        topBinding.Mode = BindingMode.TwoWay;
-                        topBinding.Source = colorNode;
-                        BindingOperations.SetBinding(control, ColorNodeControl.PositionTopProperty, topBinding);
-
-                        Binding leftBinding = new Binding("Left");
-                        leftBinding.Mode = BindingMode.TwoWay;
-                        leftBinding.Source = colorNode;
-                        BindingOperations.SetBinding(control, ColorNodeControl.PositionLeftProperty, leftBinding);
-
                         Binding colorBinding = new Binding("Color");
                         colorBinding.Mode = BindingMode.OneWay;
                         colorBinding.Source = colorNode;
                         BindingOperations.SetBinding(control, ColorNodeControl.ColorProperty, colorBinding);
 
                         Binding canvasTopBinding = new Binding("Top");
-                        canvasTopBinding.Mode = BindingMode.OneWay;
+                        canvasTopBinding.Mode = BindingMode.TwoWay;
                         canvasTopBinding.Source = colorNode;
                         BindingOperations.SetBinding(control, Canvas.TopProperty, canvasTopBinding);
 
                         Binding canvasLeftBinding = new Binding("Left");
-                        canvasLeftBinding.Mode = BindingMode.OneWay;
+                        canvasLeftBinding.Mode = BindingMode.TwoWay;
                         canvasLeftBinding.Source = colorNode;
                         BindingOperations.SetBinding(control, Canvas.LeftProperty, canvasLeftBinding);
 
