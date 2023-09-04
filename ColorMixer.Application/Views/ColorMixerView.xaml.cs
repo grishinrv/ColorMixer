@@ -10,14 +10,15 @@ using ColorMixer.Application.Presentation;
 using ColorMixer.Application.Models;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace ColorMixer.Application.Views
 {
     /// <summary>
     /// Interaction logic for ColorMixerView.xaml
     /// </summary>
-    public partial class ColorMixerView : UserControl
+    public partial class ColorMixerView : UserControl, IDisposable
     {
         private bool _isDown;
         private bool _isDragging;
@@ -25,7 +26,6 @@ namespace ColorMixer.Application.Views
         // todo - move this and show logic into ColorNodeControl
         private CircleAdorner _overlayElement;
         private Point _startPoint;
-        private Canvas _mixingCanvas;
 
         #region Initialization
         public ColorMixerView()
@@ -55,23 +55,17 @@ namespace ColorMixer.Application.Views
             targetNodeBinding.Source = DataContext;
             BindingOperations.SetBinding(this, TargetColorNodeProperty, targetNodeBinding);
 
-            Binding mixingResult = new Binding("MixingResult");
-            mixingResult.Mode = BindingMode.OneWay;
-            mixingResult.Source = DataContext;
-            BindingOperations.SetBinding(this, MixingResultColorNodeProperty, mixingResult);
+            Binding colorNodesBinding = new Binding("ColorNodes");
+            colorNodesBinding.Mode = BindingMode.OneTime;
+            colorNodesBinding.Source = DataContext;
+            BindingOperations.SetBinding(this, ColorNodesProperty, colorNodesBinding);
         }
 
         public void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _mixingCanvas = ColorNodesItemsPresenterControl.GetItemsPanel<Canvas>()!;
-            if (_mixingCanvas == null)
-            {
-                throw new InvalidOperationException("Not possible to perform mixing without canvas");
-            }
-
-            _mixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
-            _mixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
-            _mixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
+            MixingCanvas.PreviewMouseLeftButtonDown += MixingCanvas_PreviewMouseLeftButtonDown;
+            MixingCanvas.PreviewMouseMove += MixingCanvas_PreviewMouseMove;
+            MixingCanvas.PreviewMouseLeftButtonUp += MixingCanvas_PreviewMouseLeftButtonUp;
             PreviewKeyDown += ColorMixer_PreviewKeyDown;
         }
 
@@ -94,15 +88,17 @@ namespace ColorMixer.Application.Views
             get { return (IColorNode)GetValue(SelectedColorNodeProperty); }
             set { SetValue(SelectedColorNodeProperty, value); }
         }
+
         public IColorNode TargetColorNode
         {
             get { return (IColorNode)GetValue(TargetColorNodeProperty); }
             set { SetValue(TargetColorNodeProperty, value); }
         }
-        public IColorNode MixingResultColorNode
+
+        public ObservableCollection<IColorNode> ColorNodes
         {
-            get { return (IColorNode)GetValue(MixingResultColorNodeProperty); }
-            set { SetValue(MixingResultColorNodeProperty, value); }
+            get { return (ObservableCollection<IColorNode>)GetValue(ColorNodesProperty); }
+            set { SetValue(ColorNodesProperty, value); }
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -133,12 +129,12 @@ namespace ColorMixer.Application.Views
                 typeof(ColorMixerView), 
                 new PropertyMetadata(null));
 
-        public static readonly DependencyProperty MixingResultColorNodeProperty =
+        public static readonly DependencyProperty ColorNodesProperty =
             DependencyProperty.Register(
-                nameof(MixingResultColorNode),
-                typeof(IColorNode),
-                typeof(ColorMixerView),
-                new PropertyMetadata(null));
+                nameof(ColorNodes), 
+                typeof(ObservableCollection<IColorNode>), 
+                typeof(ColorMixerView), 
+                new PropertyMetadata(null, new PropertyChangedCallback(OnColorNodesPropertySet)));
 
         #endregion
 
@@ -149,8 +145,8 @@ namespace ColorMixer.Application.Views
                 _originalElement = originalElement;
                 SelectedColorNode = (IColorNode)_originalElement.DataContext;
                 _isDown = true;
-                _startPoint = e.GetPosition(_mixingCanvas);
-                _mixingCanvas.CaptureMouse();
+                _startPoint = e.GetPosition(MixingCanvas);
+                MixingCanvas.CaptureMouse();
                 e.Handled = true;
             }
         }
@@ -165,16 +161,15 @@ namespace ColorMixer.Application.Views
 
         private void MixingCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDown && _isDragging && e.Source == _mixingCanvas)
+            if (_isDown && _isDragging && e.Source == MixingCanvas)
             {
-                ColorNodeControl? target = _mixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
+                ColorNodeControl? target = MixingCanvas.FindChildByTypeAndPoint<ColorNodeControl>(e.GetPosition(App.Current.MainWindow));
                 if (target != null && target.DataContext is IColorNode targetContext)
                 {
                     TargetColorNode = targetContext;
                     if (TargetColorNode != SelectedColorNode)
                     {
                         MixColorsCommand.Execute(null);
-                        CreateRelationLines();
                     }
                     DragFinished(true);
                 }
@@ -187,7 +182,6 @@ namespace ColorMixer.Application.Views
                 e.Handled = true;
             }
         }
-
 
         private void DragFinished(bool cancelled)
         {
@@ -204,14 +198,15 @@ namespace ColorMixer.Application.Views
                 _overlayElement = null;
             }
         }
+
         private void MixingCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (_isDown)
             {
                 if ((_isDragging == false) &&
-                    ((Math.Abs(e.GetPosition(_mixingCanvas).X - _startPoint.X) >
+                    ((Math.Abs(e.GetPosition(MixingCanvas).X - _startPoint.X) >
                       SystemParameters.MinimumHorizontalDragDistance) ||
-                     (Math.Abs(e.GetPosition(_mixingCanvas).Y - _startPoint.Y) >
+                     (Math.Abs(e.GetPosition(MixingCanvas).Y - _startPoint.Y) >
                       SystemParameters.MinimumVerticalDragDistance)))
                 {
                     DragStarted();
@@ -232,16 +227,9 @@ namespace ColorMixer.Application.Views
 
         private void DragMoved()
         {
-            Point currentPosition = Mouse.GetPosition(_mixingCanvas);
-
+            Point currentPosition = Mouse.GetPosition(MixingCanvas);
             _overlayElement.LeftOffset = currentPosition.X - _startPoint.X;
             _overlayElement.TopOffset = currentPosition.Y - _startPoint.Y;
-        }
-
-        private void CreateRelationLines()
-        {
-            CreateRelationLine(SelectedColorNode, MixingResultColorNode);
-            CreateRelationLine(TargetColorNode, MixingResultColorNode);
         }
 
         private void CreateRelationLine(IColorNode from, IColorNode to)
@@ -249,8 +237,10 @@ namespace ColorMixer.Application.Views
             Line line = new Line() 
             { 
                 Stroke = new SolidColorBrush(Colors.Gray),
-                StrokeThickness = 1.35
+                StrokeThickness = 1.35,
             };
+
+            Panel.SetZIndex(line, 10);
 
             Binding beginXbinding = new Binding("Top");
             beginXbinding.Mode = BindingMode.OneWay;
@@ -272,7 +262,79 @@ namespace ColorMixer.Application.Views
             endYbinding.Source = to;
             BindingOperations.SetBinding(line, Line.Y2Property, endYbinding);
 
+            MixingCanvas.Children.Add(line);
+        }
 
+        private static void OnColorNodesPropertySet(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ColorMixerView self = (ColorMixerView)d;
+
+            if (e.OldValue is ObservableCollection<IColorNode> old)
+            {
+                old.CollectionChanged -= self.ColorNodes_CollectionChanged;
+            }
+            if (e.NewValue is ObservableCollection<IColorNode> newValue)
+            {
+                newValue.CollectionChanged += self.ColorNodes_CollectionChanged;
+            }
+        }
+
+        private void ColorNodes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems!= null)
+            {
+                foreach (object? item in e.NewItems)
+                {
+                    if (item is IColorNode colorNode)
+                    {
+                        ColorNodeControl control = new ColorNodeControl();
+                        Panel.SetZIndex(control, 100);
+                        control.DataContext = colorNode;
+
+                        Binding topBinding = new Binding("Top");
+                        topBinding.Mode = BindingMode.TwoWay;
+                        topBinding.Source = colorNode;
+                        BindingOperations.SetBinding(control, ColorNodeControl.PositionTopProperty, topBinding);
+
+                        Binding leftBinding = new Binding("Left");
+                        leftBinding.Mode = BindingMode.TwoWay;
+                        leftBinding.Source = colorNode;
+                        BindingOperations.SetBinding(control, ColorNodeControl.PositionLeftProperty, leftBinding);
+
+                        Binding colorBinding = new Binding("Color");
+                        colorBinding.Mode = BindingMode.OneWay;
+                        colorBinding.Source = colorNode;
+                        BindingOperations.SetBinding(control, ColorNodeControl.ColorProperty, colorBinding);
+
+                        Binding canvasTopBinding = new Binding("Top");
+                        canvasTopBinding.Mode = BindingMode.OneWay;
+                        canvasTopBinding.Source = colorNode;
+                        BindingOperations.SetBinding(control, Canvas.TopProperty, canvasTopBinding);
+
+                        Binding canvasLeftBinding = new Binding("Left");
+                        canvasLeftBinding.Mode = BindingMode.OneWay;
+                        canvasLeftBinding.Source = colorNode;
+                        BindingOperations.SetBinding(control, Canvas.LeftProperty, canvasLeftBinding);
+
+                        MixingCanvas.Children.Add(control);
+
+                        if (colorNode.LeftParent != null && colorNode.RightParent != null)
+                        {
+                            CreateRelationLine(colorNode.LeftParent, colorNode);
+                            CreateRelationLine(colorNode.RightParent, colorNode);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (ColorNodes != null)
+            {
+                ColorNodes.CollectionChanged -= ColorNodes_CollectionChanged;
+            }
+            MixingCanvas.Children.Clear();
         }
     }
 }

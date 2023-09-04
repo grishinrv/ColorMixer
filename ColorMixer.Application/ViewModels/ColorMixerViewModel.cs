@@ -1,4 +1,5 @@
-﻿using ColorMixer.Application.Services;
+﻿using ColorMixer.Application.Models;
+using ColorMixer.Application.Services;
 using ColorMixer.Contracts.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,7 +20,7 @@ namespace ColorMixer.Application.ViewModels
             SelectedMixingType = MixingType.Subtractive;
         }
 
-        public ObservableCollection<ColorNodeViewModel> ColorNodes { get; } = new ObservableCollection<ColorNodeViewModel>();
+        public ObservableCollection<IColorNode> ColorNodes { get; } = new ObservableCollection<IColorNode>();
 
         [ObservableProperty]
         private ColorNodeViewModel _selected = new ColorNodeViewModel{ Left = 300, Top = 300 };

@@ -69,37 +69,9 @@
 
         </StackPanel>
 
-        <StackPanel 
-            Grid.Row="1"
-            x:Name="MixingStackPanel">
-
-            <ItemsControl 
-                x:Name="ColorNodesItemsPresenterControl"
-                ItemsSource="{Binding Path=ColorNodes}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=OneWay}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Top, Mode=OneWay}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-                
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:ColorNodeControl 
-                            PositionLeft="{Binding Left, Mode=TwoWay}"
-                            PositionTop="{Binding Top, Mode=TwoWay}"
-                            Color="{Binding Color, Mode=OneWay}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </StackPanel>
+        <Canvas 
+            Grid.Row="1" 
+            x:Name="MixingCanvas" />
 
         <Button 
             Grid.Row="2"
