@@ -242,15 +242,15 @@ namespace ColorMixer.Application.Views
 
             Panel.SetZIndex(line, 10);
 
-            Binding beginXbinding = new Binding("Top");
+            Binding beginXbinding = new Binding("Left");
             beginXbinding.Mode = BindingMode.OneWay;
             beginXbinding.Source = from;
             BindingOperations.SetBinding(line, Line.X1Property, beginXbinding);
 
-            Binding beginYbinding = new Binding("Left");
+            Binding beginYbinding = new Binding("Top");
             beginYbinding.Mode = BindingMode.OneWay;
             beginYbinding.Source = from;
-            BindingOperations.SetBinding(line, Line.Y1Property, beginXbinding);
+            BindingOperations.SetBinding(line, Line.Y1Property, beginYbinding);
 
             Binding endXbinding = new Binding("Top");
             endXbinding.Mode = BindingMode.OneWay;
